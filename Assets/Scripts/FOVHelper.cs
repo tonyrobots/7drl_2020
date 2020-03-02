@@ -41,7 +41,7 @@ public class FOVHelper
             myTile.IsVisible = true;
             // Debug.Log("setting " + myTile + " to visible");
             // if (MAP[(int)ox][(int)oy] == BLOCK)
-            if (myTile.Type == Tile.TileType.WALL) { // if blocks vision, should generalize this
+            if (myTile.Type == Tile.TileTypes.WALL) { // if blocks vision, should generalize this
                 return;
             }
             ox += x;
@@ -50,7 +50,7 @@ public class FOVHelper
     }
 
     void HideTiles(Map map) {
-        foreach (Tile tile in map._tiles) {
+        foreach (Tile tile in map.Tiles) {
             tile.IsVisible = false;
         }
     }

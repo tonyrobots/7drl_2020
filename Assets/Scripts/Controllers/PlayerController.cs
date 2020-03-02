@@ -22,17 +22,19 @@ public class PlayerController : MonoBehaviour
     {        
         // should use a separate input manager
             if (Input.GetKeyDown(KeyCode.UpArrow)) {
-                player_data.Move(0,1);
+                player_data.AttemptMove(0,1);
             } else if(Input.GetKeyDown(KeyCode.DownArrow)) {
-                player_data.Move(0, -1);
+                player_data.AttemptMove(0, -1);
             } else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-                player_data.Move(-1, 0);
+                player_data.AttemptMove(-1, 0);
             } else if (Input.GetKeyDown(KeyCode.RightArrow)) {
-                player_data.Move(1, 0);
+                player_data.AttemptMove(1, 0);
+            } else if (Input.GetKeyDown(KeyCode.Space)) {
+                player_data.Wait();
             }
     }
 
     public void Refresh(Entity entity, GameObject go) {
-        transform.position = new Vector3(entity._tile.X, entity._tile.Y, 0); 
+        transform.position = new Vector3(entity.Tile.X, entity.Tile.Y, 0); 
     }
 }

@@ -8,58 +8,89 @@ public class Tile
     int _x;
     int _y;
     Map _map;
-    public enum TileType {
+    public enum TileTypes {
         FLOOR,
         WALL
     }
-    TileType _type;
+    TileTypes _type;
 
     Action<Tile> cbTileChanged;    
 
-    bool isRevealed = false;
+    bool isExplored = false;
     bool isVisible = false;
+
+    public List<Entity> _entities;
 
     
     // accessors and such
     public int Y { get => _y; set => _y = value; }
     public int X { get => _x; set => _x = value; }
-    public TileType Type { get => _type; set {
+    public TileTypes Type { get => _type; set {
          _type = value;
+         // call callbacks on tile type change
         if (cbTileChanged != null) cbTileChanged(this);     
          } 
     }
     public Map Map { get => _map; set => _map = value; }
 
-    public bool IsRevealed { get => isRevealed; set => isRevealed = value; }
+    public bool IsExplored { get => isExplored; set => isExplored = value; }
+
     public bool IsVisible { get => isVisible; set {
             isVisible = value;
-            if (value) isRevealed = true;
+            if (value) isExplored = true;
+            // call callbacks because tile visibility values change
+
             if ( cbTileChanged != null) cbTileChanged(this);
         }
     }
 
-    public Tile (Map map, int x, int y, TileType type=TileType.WALL) {
+    public Tile (Map map, int x, int y, TileTypes type=TileTypes.WALL) {
         this.Map = map;
         this.X = x;
         this.Y = y;
         this.Type = type;
+        _entities = new List<Entity>();
     }
 
-    public bool IsBetween(int x1, int x2, int y1, int y2) // this isn't used
-    {
-        return ((x1 < this.X && this.X < x2) || (y1 < this.Y && this.Y < y2));
-    }
 
     public bool IsPassable(){
-        return (_type != TileType.WALL);
+        foreach (Entity e in _entities) {
+            if (!e.isPassable) {
+                return false;
+            } 
+        }
+        return (_type != TileTypes.WALL);
+
     }
 
     public void Dig() {
-        _type = TileType.FLOOR;
+        _type = TileTypes.FLOOR;
     }
 
     public override string ToString() {
         return ("Tile (" + X + ", " + Y +")");
+    }
+
+    public void Enter(Entity e){
+        // add to list of entities on this tile
+        _entities.Add(e);
+
+    }
+
+    public void Exit(Entity e) {
+        // remove from list of entities on this tile
+        _entities.Remove(e);
+    }
+
+    public Actor GetActorOnTile() {
+        foreach (Entity e in _entities)
+        {
+            if (!e.isPassable)
+            {
+                return e as Actor; // this seems like some funky hoodoo
+            } 
+        }
+        return null;
     }
 
     public void RegisterTileChangedCallback(Action<Tile> callback) {

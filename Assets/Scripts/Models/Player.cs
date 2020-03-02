@@ -2,38 +2,56 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player:Entity
+public class Player:Actor
 {
-    int _x; //maybe don't need these, just a tile?
-    int _y;
 
 
     FOVHelper fovHelper = new FOVHelper();
 
-    public int X { get => _x; set => _x = value; }
-    public int Y { get => _y; set => _y = value; }
 
     public Player(Tile startingTile) // init by Tile
     {
-        _x = startingTile.X;
-        _y = startingTile.Y;
-        _map = startingTile.Map;
-        _tile = startingTile;
-        fovHelper.FOV(_tile);
-        
+        Map = startingTile.Map;
+        Tile = startingTile;
+        fovHelper.FOV(Tile);
+        Tile.Enter(this);
+        health = new Health(40, this);
+        Name = "Player";   
     }
 
-    public void Move(int x, int y) {
-        Tile targetTile;
+    public void AttemptMove(int x, int y) {
+        Tile targetTile = Map.GetTile(Tile.X + x, Tile.Y + y);
 
-        if (((targetTile = _map.GetTile(_x + x, _y + y)) != null) && targetTile.IsPassable()) { // if there is a tile there and it's passable
-                _x += x;
-                _y += y;
-                _tile = targetTile;
+        // if there is a tile there and it's passable, move there
+        if (targetTile != null && targetTile.IsPassable()) {
+            Move(targetTile);
+        } else if (targetTile.GetActorOnTile() != null ) {
+            Actor targetEnemy = targetTile.GetActorOnTile();
+            Attack(targetEnemy);
+
         }
-        fovHelper.FOV(_tile);
+    
+    }
+
+    void Move(Tile targetTile) {
+        // de-register from current tile (is there a nicer way to handle this?)
+        Tile.Exit(this);
+        Tile = targetTile;
+        Tile.Enter(this);
+        fovHelper.FOV(Tile);
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
+    }
+
+    void Attack(Actor targetEnemy) {
+        Map.Game.Log($"You swing at {targetEnemy.Name}");
+        targetEnemy.health.TakeDamage(Random.Range(4,10));
+        if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
+    }
+
+    public void Tick(int currentTurn) {
+        // do all "tick" actions that have registered. Need to figure out how to handle.
+        health.Tick();
     }
 
 

@@ -1,54 +1,62 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RogueSharp.Algorithms;
 
-public class Map 
+public class Map
 {
 
-    public Game _game;
+    private Game game;
 
-    public Tile[,] _tiles;
-    public List<Rect> _rooms;
-    public List<Monster> _monsters;
+    private Tile[,] tiles;
+    private List<Rect> rooms;
+    private List<Monster> monsters;
 
-    public int _width;
-    public int _height;
+    private int width;
+    private int height;
+
+    public Game Game { get => game; set => game = value; }
+    public Tile[,] Tiles { get => tiles; set => tiles = value; }
+    public List<Rect> Rooms { get => rooms; set => rooms = value; }
+    public List<Monster> Monsters { get => monsters; set => monsters = value; }
+    public int Width { get => width; set => width = value; }
+    public int Height { get => height; set => height = value; }
 
     public Map(int width, int height, Game game) {
-        this._width = width;
-        this._height = height;
-        _game = game;
+        this.Width = width;
+        this.Height = height;
+        Game = game;
 
-        _tiles = new Tile[width,height];
-        _monsters = new List<Monster>();
+        Tiles = new Tile[width,height];
+        Monsters = new List<Monster>();
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                _tiles[x,y] = new Tile(this, x, y);
+                Tiles[x,y] = new Tile(this, x, y);
             }
         }
         Debug.Log("Map created with " + width*height + " tiles.");
     }
 
     public Tile GetTile(int x, int y) {
-        if (x > _width || x < 0 || y < 0 || y > _height) {
+        if (x > Width || x < 0 || y < 0 || y > Height) {
             Debug.LogError("Tile (" +  x +"," + y + ") is out of bounds.");
             return null;
         } else {
-            return _tiles[x,y];
+            return Tiles[x,y];
         }
     }
 
     public void GenerateRooms(int maxWidth=10, int maxHeight=10, int maxRooms=25, int minWidth=3, int minHeight=3, bool allowRoomOverlap=false ) {
-        _rooms = new List<Rect>();
+        Rooms = new List<Rect>();
         for (int i = 0; i < maxRooms; i++)
         {
             int roomWidth = Random.Range(minWidth, maxWidth);
             int roomHeight = Random.Range(minHeight, maxHeight);
-            int x1 = Random.Range(1, _width - roomWidth);
-            int y1 = Random.Range(1, _height - roomHeight);
+            int x1 = Random.Range(1, Width - roomWidth);
+            int y1 = Random.Range(1, Height - roomHeight);
 
             Rect newRoom = new Rect(x1,y1,roomWidth,roomHeight);
 
@@ -57,7 +65,7 @@ public class Map
                 continue;
             }
 
-            _rooms.Add(newRoom);
+            Rooms.Add(newRoom);
             // Debug.Log(newRoom);
             // Debug.Log("center: " + newRoom.Center());
 
@@ -66,23 +74,49 @@ public class Map
             {
                 for (int y = newRoom.Y1; y < newRoom.Y2; y++)
                 {
-                    GetTile(x,y).Type = Tile.TileType.FLOOR;
+                    GetTile(x,y).Type = Tile.TileTypes.FLOOR;
                 }
             }
 
             // Temp: add a monster to the middle of the room, except for first room
             if (i>0) {
-                AddMonster( new Monster(GetTile(newRoom.Center().x, newRoom.Center().y),'M', Color.green) );
+                AddMonster( new Monster(GetTile(newRoom.Center().x, newRoom.Center().y),'M', Color.green, "scary monster") );
             }
         }
         GenerateHalls();
     }
 
-    void GenerateHalls() {
-        for (int i = 1; i < _rooms.Count; i++)
+
+    public Tile GetAppropriateStartingTile () {
+
+        return GetTile(Rooms[0].Center().x, Rooms[0].Center().y);
+        
+    }
+
+    public int GetManhattanDistanceBetweenTiles(Tile t1, Tile t2)
+    {
+        return (Mathf.Abs(t1.X - t2.X) + Mathf.Abs(t1.Y - t2.Y));
+    }
+
+    public void AddMonster(Monster monster)
+    {
+        Monsters.Add(monster);
+        Game.Log("adding monster at " + monster.Tile);
+    }
+
+    // public void RemoveMonster(Monster monster)
+    // {
+    //     Monsters.Remove(monster);
+    // }
+
+    // Private methods
+
+    void GenerateHalls()
+    {
+        for (int i = 1; i < Rooms.Count; i++)
         {
-            Rect room = _rooms[i-1];
-            Rect nextRoom = _rooms[i];
+            Rect room = Rooms[i - 1];
+            Rect nextRoom = Rooms[i];
 
             // if (i == 0)
 
@@ -92,16 +126,18 @@ public class Map
         }
     }
 
-    public Tile GetAppropriateStartingTile () {
-
-        return GetTile(_rooms[0].Center().x, _rooms[0].Center().y);
-        
-    } 
-
     void DigTunnel(Tile startTile, Tile endTile) {
-        // dig horiz first
-        DigHorizTunnel(startTile.X, endTile.X, startTile.Y);
-        DigVertTunnel(startTile.Y, endTile.Y, endTile.X);
+        // dig horiz first?
+
+        if (Random.Range(0,2) == 1){
+            DigHorizTunnel(startTile.X, endTile.X, startTile.Y);
+            DigVertTunnel(startTile.Y, endTile.Y, endTile.X);
+        } else {
+            DigVertTunnel(startTile.Y, endTile.Y, endTile.X);
+            DigHorizTunnel(startTile.X, endTile.X, startTile.Y);
+        }
+
+
     }
     
     void DigHorizTunnel(int x1, int x2, int y) {
@@ -132,7 +168,7 @@ public class Map
     }
 
     bool IsRoomLocationValid(Rect room) {
-        foreach (Rect existingRoom in _rooms)
+        foreach (Rect existingRoom in Rooms)
         {
             if (room.Intersects(existingRoom)) {
                 return false;
@@ -142,9 +178,7 @@ public class Map
     }
 
 
-    void AddMonster(Monster monster){
-        _monsters.Add(monster);
-        Debug.Log("adding monster at " + monster._tile);
-    }
+
+
 
 }

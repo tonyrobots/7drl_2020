@@ -3,17 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Entity 
+public abstract class Entity 
 {
-    public Tile _tile;
-    public char _symbol;
-    public Color _color;
-    protected Map _map;
+    private Tile tile;
+    private char symbol;
+    private Color color;
+    private Map map;
+    private string name;
 
-    public bool _isVisible = false;
-
+    public bool isVisible = false;
+    public bool isPassable = false;
 
     protected Action<Entity> cbEntityChanged;
+
+    public Tile Tile { get => tile; set => tile = value; }
+    public char Symbol { get => symbol; set => symbol = value; }
+    public Color Color { get => color; set => color = value; }
+    public Map Map { get => map; set => map = value; }
+    public string Name { get => name; set => name = value; }
+
+
 
     public void RegisterEntityChangedCallback(Action<Entity> callback)
     {

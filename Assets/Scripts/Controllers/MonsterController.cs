@@ -25,12 +25,18 @@ public class MonsterController : MonoBehaviour
 
     public void Refresh(Entity entity, GameObject go)
     {
-        if (entity._isVisible) {
-            transform.position = new Vector3(entity._tile.X, entity._tile.Y, 0);
+        if (entity.isVisible)
+        {
+            transform.position = new Vector3(entity.Tile.X, entity.Tile.Y, 0);
             transform.localScale = new Vector3(1, 1, 1);
-
-        } else {
-            transform.localScale = new Vector3(0,0,0);
+            TextMeshPro tmp = GetComponent<TextMeshPro>();
+            tmp.text = entity.Symbol.ToString();
+            tmp.fontSize = 9;
+            tmp.color = entity.Color;
+        }
+        else
+        {
+            transform.localScale = new Vector3(0, 0, 0);
         }
 
     }

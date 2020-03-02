@@ -266,7 +266,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallSprite: {fileID: 21300000, guid: 4fa7239bead1c25498f0424acb700fc1, type: 3}
   floorSprite: {fileID: 21300000, guid: 82f2bb45fd459fc4bbdae9ac1f159aa2, type: 3}
-  lightColor: {r: 0.8679245, g: 0.6480352, b: 0, a: 0.65882355}
+  lightColor: {r: 1, g: 0.91513705, b: 0.6650944, a: 0.5176471}
   dimColor: {r: 0.3490566, g: 0.3490566, b: 0.3490566, a: 0.9490196}
   player_go: {fileID: 1804789127}
 --- !u!4 &1246989704

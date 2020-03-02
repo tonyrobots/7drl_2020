@@ -17,14 +17,15 @@ public class WorldController : MonoBehaviour
 
     public GameObject player_go;
     PlayerController playerController;
+    RogueSharp.PathFinder pf;
 
     // Start is called before the first frame update
     void Start()
     {
         game = new Game();
 
-        map = new Map(50,25, game); 
-        map.GenerateRooms(10,10,20,3,3);
+        map = new Map(40,20, game); 
+        map.GenerateRooms(10,10,15,4,3);
 
         game.CurrentMap = map;
 
@@ -32,10 +33,13 @@ public class WorldController : MonoBehaviour
         playerController = player_go.GetComponent<PlayerController>();
         playerController.Player_data = player;
         playerController.Refresh(player, player_go);
-        
+
+        game._player = player;
+
+
         GenerateMapGameObjects(map);
 
-        // this is also probably wrong :P
+        // this is also probably wrong :O
         GenerateMonsterGameObjects();
 
         // Listen for player move event and end turn when it happens (this is probably very wrong way to go)
@@ -51,31 +55,30 @@ public class WorldController : MonoBehaviour
 
     public void AdvanceTurn(int t = 1)
     {
-        game._gamestate = Game.GameState.ENEMY_TURN; 
+        game._gamestate = Game.GameStates.ENEMY_TURN; 
         for (int i = 0; i < t; i++)
         {
             DoMonsterTurns();
         }
         game.TurnCount++;
-        // Debug.Log($"turn: {game.TurnCount}");
-        game._gamestate = Game.GameState.PLAYER_TURN;
+        game._gamestate = Game.GameStates.PLAYER_TURN;
+        game._player.Tick(game.TurnCount);
     }
 
     public void DoMonsterTurns()
     {
-        foreach (Monster monster in map._monsters)
+        foreach (Monster monster in map.Monsters)
         {
             monster.DoTurn();
-            // Debug.Log("doing monster turn for monster at " + monster._tile);
         }
     }
 
     void GenerateMapGameObjects(Map map) {
 
         Transform parent = GameObject.Find("Tiles").GetComponent<Transform>();
-        for (int x = 0; x < map._width; x++)
+        for (int x = 0; x < map.Width; x++)
         {
-            for (int y = 0; y < map._height; y++)
+            for (int y = 0; y < map.Height; y++)
             {
                 GameObject tile_go = new GameObject("Tile_" + x + "_" + y);
                 Tile tile_data = map.GetTile(x,y);
@@ -96,19 +99,19 @@ public class WorldController : MonoBehaviour
         SpriteRenderer sr = tile_go.GetComponent<SpriteRenderer>();
         if (tile.IsVisible)  {
             sr.color = lightColor;
-        } else if (tile.IsRevealed) {
+        } else if (tile.IsExplored) {
             sr.color = dimColor;
         } else {
             sr.color = Color.black;
         }
         switch (tile.Type)
         {
-            case Tile.TileType.WALL:
+            case Tile.TileTypes.WALL:
                 sr.sprite = wallSprite;
                 break;
 
 
-            case Tile.TileType.FLOOR:
+            case Tile.TileTypes.FLOOR:
                 sr.sprite = floorSprite;
                 break;
 
@@ -118,7 +121,7 @@ public class WorldController : MonoBehaviour
     }
 
     void GenerateMonsterGameObjects() {
-        foreach (Monster monster in map._monsters) {
+        foreach (Monster monster in map.Monsters) {
             CreateMonsterGO(monster);
         }
     }
@@ -132,16 +135,13 @@ public class WorldController : MonoBehaviour
 
         Transform parent = GameObject.Find("Monsters").GetComponent<Transform>();
 
-
-        monster_go.transform.position = new Vector3(monster._tile.X, monster._tile.Y, 0);
+        monster_go.transform.position = new Vector3(monster.Tile.X, monster.Tile.Y, 0);
         monster_go.transform.parent = parent;
         TextMeshPro tmp = monster_go.AddComponent<TextMeshPro>();
-        tmp.text = monster._symbol.ToString();
+        tmp.text = monster.Symbol.ToString();
         tmp.fontSize = 9;
-        tmp.color = monster._color;
+        tmp.color = monster.Color;
         monster_go.GetComponent<RectTransform>().sizeDelta = new Vector2(1, 1);
-
-
-        // mc.Refresh(monster, monster_go);
+        mc.Refresh(monster, monster_go);
     }
 }
