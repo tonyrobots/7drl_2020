@@ -15,8 +15,10 @@ public class Player:Actor
         Tile = startingTile;
         fovHelper.FOV(Tile);
         Tile.Enter(this);
-        health = new Health(40, this);
-        Name = "Player";   
+        health = new Health(20, this);
+        Name = "Player";
+        Symbol = '@';
+        Color = Color.black;
     }
 
     public void AttemptMove(int x, int y) {
@@ -54,5 +56,13 @@ public class Player:Actor
         health.Tick();
     }
 
+    public override void Die() {
+        Map.Game.Log($"{Name} dies unceremoniously, the game is over.");
+        Symbol = '%';
+        Color = new Color(.4f, .2f, .1f);
+        isAlive = false;
+        Map.Game.gamestate = Game.GameStates.PLAYER_DEAD;
+        if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
 
+    }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class Actor : Entity
 {
 
-    public bool isAlive;
+    public bool isAlive = true;
     
     // components
     public Health health;

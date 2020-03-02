@@ -101,7 +101,7 @@ public class Map
     public void AddMonster(Monster monster)
     {
         Monsters.Add(monster);
-        Game.Log("adding monster at " + monster.Tile);
+        //Game.Log("adding monster at " + monster.Tile);
     }
 
     // public void RemoveMonster(Monster monster)

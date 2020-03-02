@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class WorldController : MonoBehaviour
 {
@@ -24,8 +25,8 @@ public class WorldController : MonoBehaviour
     {
         game = new Game();
 
-        map = new Map(40,20, game); 
-        map.GenerateRooms(10,10,15,4,3);
+        map = new Map(60,40, game); 
+        map.GenerateRooms(10,10,25,4,3);
 
         game.CurrentMap = map;
 
@@ -55,13 +56,17 @@ public class WorldController : MonoBehaviour
 
     public void AdvanceTurn(int t = 1)
     {
-        game._gamestate = Game.GameStates.ENEMY_TURN; 
+        if (game.gamestate == Game.GameStates.PLAYER_DEAD) {
+            GameOver();
+            return;
+        }
+        game.gamestate = Game.GameStates.ENEMY_TURN; 
         for (int i = 0; i < t; i++)
         {
             DoMonsterTurns();
         }
         game.TurnCount++;
-        game._gamestate = Game.GameStates.PLAYER_TURN;
+        game.gamestate = Game.GameStates.PLAYER_TURN;
         game._player.Tick(game.TurnCount);
     }
 
@@ -143,5 +148,12 @@ public class WorldController : MonoBehaviour
         tmp.color = monster.Color;
         monster_go.GetComponent<RectTransform>().sizeDelta = new Vector2(1, 1);
         mc.Refresh(monster, monster_go);
+    }
+
+    void GameOver() {
+        player.UnregisterEntityChangedCallback((entity) => { AdvanceTurn(); });
+
+        game.Log("Game is over. Hit space to restart.");
+
     }
 }

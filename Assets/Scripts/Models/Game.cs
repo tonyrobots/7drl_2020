@@ -10,10 +10,11 @@ public class Game
     public enum GameStates
     {
         PLAYER_TURN,
-        ENEMY_TURN
+        ENEMY_TURN,
+        PLAYER_DEAD
     }
 
-    public GameStates _gamestate = GameStates.PLAYER_TURN;
+    public GameStates gamestate = GameStates.PLAYER_TURN;
     
     public Map _currentMap;
     public Player _player;
