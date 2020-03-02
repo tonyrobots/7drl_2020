@@ -11,6 +11,7 @@ public class Map
     private Tile[,] tiles;
     private List<Rect> rooms;
     private List<Monster> monsters;
+    private List<Item> items;
 
     private int width;
     private int height;
@@ -19,6 +20,8 @@ public class Map
     public Tile[,] Tiles { get => tiles; set => tiles = value; }
     public List<Rect> Rooms { get => rooms; set => rooms = value; }
     public List<Monster> Monsters { get => monsters; set => monsters = value; }
+    public List<Item> Items { get => items; set => items = value; }
+
     public int Width { get => width; set => width = value; }
     public int Height { get => height; set => height = value; }
 
@@ -29,6 +32,7 @@ public class Map
 
         Tiles = new Tile[width,height];
         Monsters = new List<Monster>();
+        Items = new List<Item>();
 
         for (int x = 0; x < width; x++)
         {
@@ -82,6 +86,11 @@ public class Map
             if (i>0) {
                 AddMonster( new Monster(GetTile(newRoom.Center().x, newRoom.Center().y),'M', Color.green, "scary monster") );
             }
+
+            // Temp: add a healing potion to some places
+            if (Random.Range(0,100) > 70) {
+                AddItem( new Item(GetTile(newRoom.Center().x-1, newRoom.Center().y),'!', Color.blue, "healing potion"  ));
+            }
         }
         GenerateHalls();
     }
@@ -103,6 +112,17 @@ public class Map
         Monsters.Add(monster);
         //Game.Log("adding monster at " + monster.Tile);
     }
+
+    public void AddItem(Item item)
+    {
+        // is there a way to genericize this so we don't need separate methods for items and monsters?
+        Items.Add(item);
+    }
+
+    public void RemoveItem(Item item) {
+        Items.Remove(item);
+    }
+
 
     // public void RemoveMonster(Monster monster)
     // {

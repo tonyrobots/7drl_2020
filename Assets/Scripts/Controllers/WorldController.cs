@@ -42,6 +42,8 @@ public class WorldController : MonoBehaviour
 
         // this is also probably wrong :O
         GenerateMonsterGameObjects();
+        GenerateItemGameObjects();
+
 
         // Listen for player move event and end turn when it happens (this is probably very wrong way to go)
         player.RegisterEntityChangedCallback((entity) => { AdvanceTurn(); });
@@ -64,6 +66,7 @@ public class WorldController : MonoBehaviour
         for (int i = 0; i < t; i++)
         {
             DoMonsterTurns();
+            DoItemTurns();
         }
         game.TurnCount++;
         game.gamestate = Game.GameStates.PLAYER_TURN;
@@ -75,6 +78,14 @@ public class WorldController : MonoBehaviour
         foreach (Monster monster in map.Monsters)
         {
             monster.DoTurn();
+        }
+    }
+
+    public void DoItemTurns()
+    {
+        foreach (Item item in map.Items)
+        {
+            item.DoTurn();
         }
     }
 
@@ -131,9 +142,36 @@ public class WorldController : MonoBehaviour
         }
     }
 
+    void GenerateItemGameObjects() {
+        foreach (Item item in map.Items) {
+            CreateItemGO(item);
+        }
+    }
+
+    void CreateItemGO(Item item) {
+
+        // again is there some way to reduce duplication between this and monster equivalents?
+        GameObject go = new GameObject(item.Name);
+        ItemController ic = go.AddComponent<ItemController>();
+
+        ic.Item_data = item;
+
+        Transform parent = GameObject.Find("Items").GetComponent<Transform>();
+
+        go.transform.position = new Vector3(item.Tile.X, item.Tile.Y, 0);
+        go.transform.parent = parent;
+        TextMeshPro tmp = go.AddComponent<TextMeshPro>();
+        tmp.text = item.Symbol.ToString();
+        tmp.fontSize = 9;
+        tmp.color = item.Color;
+        go.GetComponent<RectTransform>().sizeDelta = new Vector2(1,1);
+        ic.Refresh(item, go);
+    
+    }
+
     void CreateMonsterGO(Monster monster)
     {
-        GameObject monster_go = new GameObject("Monster_X");
+        GameObject monster_go = new GameObject(monster.Name);
         MonsterController mc = monster_go.AddComponent<MonsterController>();
 
         mc.Monster_data = monster;
