@@ -6,6 +6,9 @@ public abstract class Actor : Entity
 {
 
     public bool isAlive = true;
+
+    // TODO Will need to develop this system, probably also using components? Wish I were using unity more. Too late?
+    public List<string> statuses = new List<string>();
     
     // components
     public Health health;

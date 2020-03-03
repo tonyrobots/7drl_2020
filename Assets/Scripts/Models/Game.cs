@@ -16,12 +16,14 @@ public class Game
 
     public GameStates gamestate = GameStates.PLAYER_TURN;
     
-    public Map _currentMap;
+    public Map currentMap;
     private Player player;
+    private int level=1;
 
-    public Map CurrentMap { get => _currentMap; set => _currentMap = value; }
+    public Map CurrentMap { get => currentMap; set => currentMap = value; }
     public int TurnCount { get => _turnCount; set => _turnCount = value; }
     public Player Player { get => player; set => player = value; }
+    public int Level { get => level; set => level = value; }
 
     public Queue<Message> messageLog;
 

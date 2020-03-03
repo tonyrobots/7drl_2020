@@ -100,10 +100,11 @@ public class Map
 
         }
         GenerateHalls();
-        // Temp: add 2-5 healing potions randomly around
-        for (int j = 0; j < Random.Range(2, 6); j++)
+        // Temp: add some healing potions randomly around
+        for (int j = 0; j < Random.Range(4, 7); j++)
         {
-            AddItem(new Item(GetRandomFloorTile(), '!', Color.blue, "healing potion"));
+            Item newItem = new Item(GetRandomFloorTile(), '!', Color.blue, "healing potion", (actor, item) => { Helpers.ItemEffects.HealingPotion(actor, item);});
+            AddItem(newItem);
         }
     }
 

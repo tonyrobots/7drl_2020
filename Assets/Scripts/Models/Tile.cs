@@ -19,9 +19,8 @@ public class Tile
     bool isExplored = false;
     bool isVisible = false;
 
-    public List<Entity> _entities;
+    public List<Entity> entities;
 
-    
     // accessors and such
     public int Y { get => _y; set => _y = value; }
     public int X { get => _x; set => _x = value; }
@@ -49,12 +48,12 @@ public class Tile
         this.X = x;
         this.Y = y;
         this.Type = type;
-        _entities = new List<Entity>();
+        entities = new List<Entity>();
     }
 
 
     public bool IsPassable(){
-        foreach (Entity e in _entities) {
+        foreach (Entity e in entities) {
             if (!e.isPassable) {
                 return false;
             } 
@@ -75,22 +74,34 @@ public class Tile
 
     public void Enter(Entity e){
         // add to list of entities on this tile
-        _entities.Add(e);
+        entities.Add(e);
 
     }
 
     public void Exit(Entity e) {
         // remove from list of entities on this tile
-        _entities.Remove(e);
+        entities.Remove(e);
     }
 
     public Actor GetActorOnTile() {
-        foreach (Entity e in _entities)
+        foreach (Entity e in entities)
         {
             if (!e.isPassable)
             {
                 return e as Actor; // this seems like some funky hoodoo
             } 
+        }
+        return null;
+    }
+
+    public Item GetItemOnTile() {
+        foreach (Entity e in entities)
+        {
+            Debug.Log($"entity here: {e.Name}");
+            if (e.GetType()== typeof(Item))
+            {
+                return e as Item; // this seems like some funky hoodoo
+            }
         }
         return null;
     }

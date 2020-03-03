@@ -71,6 +71,8 @@ public class WorldController : MonoBehaviour
             DoMonsterTurns();
             DoItemTurns();
         }
+        uiManager.UpdatePlayerStats(game);
+
         game.TurnCount++;
         game.gamestate = Game.GameStates.PLAYER_TURN;
         game.Player.Tick(game.TurnCount);

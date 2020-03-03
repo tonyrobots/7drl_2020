@@ -92,6 +92,7 @@ public class Monster : Actor
         Color = new Color(.4f,.2f,.1f);
         isAlive = false;
         isPassable = true;
+        Name += " corpse";
 
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 

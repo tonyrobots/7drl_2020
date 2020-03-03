@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Helpers;
 
 public class Player:Actor
 {
@@ -17,6 +18,7 @@ public class Player:Actor
         Tile.Enter(this);
         health = new Health(20, this);
         Name = "Player";
+        Name = TextAssetHelper.GetRandomLinefromTextAsset("names");
         Symbol = '@';
         Color = Color.black;
     }
@@ -30,7 +32,6 @@ public class Player:Actor
         } else if (targetTile.GetActorOnTile() != null ) {
             Actor targetEnemy = targetTile.GetActorOnTile();
             Attack(targetEnemy);
-
         }
     
     }
@@ -41,6 +42,11 @@ public class Player:Actor
         Tile = targetTile;
         Tile.Enter(this);
         fovHelper.FOV(Tile);
+        if (targetTile.GetItemOnTile() != null) {
+            Item i = targetTile.GetItemOnTile();
+            Map.Game.Log("You see a " + i.Name);
+            i.ActivateItem(this);
+        }
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
     }
@@ -57,7 +63,7 @@ public class Player:Actor
     }
 
     public override void Die() {
-        Map.Game.Log($"{Name} dies unceremoniously, the game is over.");
+        Map.Game.Log($"{Name} dies unceremoniously.");
         Symbol = '%';
         Color = new Color(.4f, .2f, .1f);
         isAlive = false;
