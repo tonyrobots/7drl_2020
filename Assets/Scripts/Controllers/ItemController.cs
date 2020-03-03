@@ -32,9 +32,8 @@ public class ItemController : MonoBehaviour
             transform.localScale = new Vector3(1, 1, 1);
             TextMeshPro tmp = GetComponent<TextMeshPro>();
             tmp.text = entity.Symbol.ToString();
-            tmp.fontSize = 9;
             tmp.color = entity.Color;
-        }
+            tmp.alignment = TextAlignmentOptions.Center;        }
         else
         {
             transform.localScale = new Vector3(0, 0, 0);

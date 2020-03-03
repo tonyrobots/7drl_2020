@@ -65,6 +65,8 @@ public class Tile
 
     public void Dig() {
         _type = TileTypes.FLOOR;
+        Map.FloorTiles.Add(this);
+
     }
 
     public override string ToString() {

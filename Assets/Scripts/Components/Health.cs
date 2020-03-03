@@ -6,13 +6,15 @@ public class Health
 
 {
     int _hitpoints;
+    int _maxHitpoints;
     int bleedingTimer=0;
     Actor _parent;
 
     public int Hitpoints { get => _hitpoints; set => _hitpoints = value; }
+    public int MaxHitpoints { get => _maxHitpoints; set => _maxHitpoints = value; }
 
-    public Health(int hitpoints, Actor parent) {
-        _hitpoints = hitpoints;
+    public Health(int maxHP, Actor parent) {
+        _hitpoints = MaxHitpoints = maxHP;
         _parent = parent;
     }
 

@@ -17,14 +17,24 @@ public class Game
     public GameStates gamestate = GameStates.PLAYER_TURN;
     
     public Map _currentMap;
-    public Player _player;
+    private Player player;
 
     public Map CurrentMap { get => _currentMap; set => _currentMap = value; }
     public int TurnCount { get => _turnCount; set => _turnCount = value; }
+    public Player Player { get => player; set => player = value; }
 
-    public void Log(string message) {
+    public Queue<Message> messageLog;
+
+    public Game() {
+        // messageLog = new MessageLog(this);
+        messageLog = new Queue<Message>();
+    }
+
+    public void Log(string simpleMessage) {
         // probably a temporary function until we implement UI and stuff
         // just want to have a single place to handle instead of calling debug.log everywhere
-        Debug.Log(message);
+        Debug.Log(simpleMessage);
+        Message m = new Message(simpleMessage);
+        messageLog.Enqueue(m);
     }
 }

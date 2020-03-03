@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using RogueSharp.Algorithms;
 
 public class Map
 {
@@ -9,6 +7,7 @@ public class Map
     private Game game;
 
     private Tile[,] tiles;
+    private List<Tile> floorTiles;
     private List<Rect> rooms;
     private List<Monster> monsters;
     private List<Item> items;
@@ -21,6 +20,7 @@ public class Map
     public List<Rect> Rooms { get => rooms; set => rooms = value; }
     public List<Monster> Monsters { get => monsters; set => monsters = value; }
     public List<Item> Items { get => items; set => items = value; }
+    public List<Tile> FloorTiles { get => floorTiles; set => floorTiles = value; }
 
     public int Width { get => width; set => width = value; }
     public int Height { get => height; set => height = value; }
@@ -31,6 +31,7 @@ public class Map
         Game = game;
 
         Tiles = new Tile[width,height];
+        floorTiles = new List<Tile>();
         Monsters = new List<Monster>();
         Items = new List<Item>();
 
@@ -77,8 +78,11 @@ public class Map
             for (int x = newRoom.X1; x < newRoom.X2; x++)
             {
                 for (int y = newRoom.Y1; y < newRoom.Y2; y++)
-                {
-                    GetTile(x,y).Type = Tile.TileTypes.FLOOR;
+                {   
+                    Tile t = GetTile(x,y);
+                    t.Type = Tile.TileTypes.FLOOR;
+                    floorTiles.Add(t);
+                    
                 }
             }
 
@@ -87,12 +91,20 @@ public class Map
                 AddMonster( new Monster(GetTile(newRoom.Center().x, newRoom.Center().y),'M', Color.green, "scary monster") );
             }
 
-            // Temp: add a healing potion to some places
-            if (Random.Range(0,100) > 70) {
-                AddItem( new Item(GetTile(newRoom.Center().x-1, newRoom.Center().y),'!', Color.blue, "healing potion"  ));
-            }
+            // // Temp: add a healing potion to some places
+            // if (Random.Range(0,100) > 70) {
+            //     AddItem( new Item(GetTile(newRoom.Center().x-1, newRoom.Center().y),'!', Color.blue, "healing potion"  ));
+            // }
+
+
+
         }
         GenerateHalls();
+        // Temp: add 2-5 healing potions randomly around
+        for (int j = 0; j < Random.Range(2, 6); j++)
+        {
+            AddItem(new Item(GetRandomFloorTile(), '!', Color.blue, "healing potion"));
+        }
     }
 
 
@@ -100,6 +112,10 @@ public class Map
 
         return GetTile(Rooms[0].Center().x, Rooms[0].Center().y);
         
+    }
+
+    Tile GetRandomFloorTile() {
+        return floorTiles[Random.Range(0, floorTiles.Count)];
     }
 
     public int GetManhattanDistanceBetweenTiles(Tile t1, Tile t2)

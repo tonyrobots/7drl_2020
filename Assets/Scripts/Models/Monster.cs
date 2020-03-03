@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class Monster : Actor
 {
-
+    // if alert countdown > 0, monster is aware of player and moving toward them
+    int alertCountdown = 0;
 
     public Monster(Tile startingTile, char symbol, Color color, string name) {
         Map = startingTile.Map;
@@ -23,16 +24,24 @@ public class Monster : Actor
     public void DoTurn() {
         // Monster should take their turn (even dead ones!)
 
-        // if you can see its tile, you can see the monster
-        isVisible = Tile.IsVisible;
-
         if (isAlive) {
         // replace this with some actual "AI" soon:
-            MoveTowardPlayer();
+            if (alertCountdown > 0) {
+                MoveTowardPlayer();
+            } else {
+                MoveRandomly();
+            }
+
 
             // replace this something that iterates through all registered "tick" objects (or the other way 'round, somehow)
             health.Tick();
         }
+
+        // if you can see its tile, you can see the monster
+        isVisible = Tile.IsVisible;
+        // and it can see you, so it's alerted
+        if (isVisible) alertCountdown = 12;
+        if (!isVisible) alertCountdown--;
 
         // call callbacks
         if (cbEntityChanged != null) cbEntityChanged(this); 
@@ -59,10 +68,11 @@ public class Monster : Actor
     }
 
     public void MoveTowardPlayer() {
-        Tile playerTile = Map.Game._player.Tile;
+        Tile playerTile = Map.Game.Player.Tile;
         if (Map.GetManhattanDistanceBetweenTiles(Tile, playerTile) == 1) {
-            Attack(Map.Game._player);
+            Attack(Map.Game.Player);
         } else {
+            // replace this with some sort of pathfinding to player (a*?)
             MoveRandomly();
         }
     }

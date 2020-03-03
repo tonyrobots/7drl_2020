@@ -17,8 +17,8 @@ public class WorldController : MonoBehaviour
     Game game;
 
     public GameObject player_go;
+    public UIManager uiManager;
     PlayerController playerController;
-    RogueSharp.PathFinder pf;
 
     // Start is called before the first frame update
     void Start()
@@ -35,7 +35,7 @@ public class WorldController : MonoBehaviour
         playerController.Player_data = player;
         playerController.Refresh(player, player_go);
 
-        game._player = player;
+        game.Player = player;
 
 
         GenerateMapGameObjects(map);
@@ -44,6 +44,8 @@ public class WorldController : MonoBehaviour
         GenerateMonsterGameObjects();
         GenerateItemGameObjects();
 
+        uiManager.UpdatePlayerStats(game);
+        uiManager.UpdateMessageLog(game);
 
         // Listen for player move event and end turn when it happens (this is probably very wrong way to go)
         player.RegisterEntityChangedCallback((entity) => { AdvanceTurn(); });
@@ -58,6 +60,7 @@ public class WorldController : MonoBehaviour
 
     public void AdvanceTurn(int t = 1)
     {
+        uiManager.UpdatePlayerStats(game);
         if (game.gamestate == Game.GameStates.PLAYER_DEAD) {
             GameOver();
             return;
@@ -70,7 +73,8 @@ public class WorldController : MonoBehaviour
         }
         game.TurnCount++;
         game.gamestate = Game.GameStates.PLAYER_TURN;
-        game._player.Tick(game.TurnCount);
+        game.Player.Tick(game.TurnCount);
+        uiManager.UpdateMessageLog(game);
     }
 
     public void DoMonsterTurns()
