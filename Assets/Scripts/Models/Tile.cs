@@ -96,7 +96,6 @@ public class Tile
     public Item GetItemOnTile() {
         foreach (Entity e in entities)
         {
-            Debug.Log($"entity here: {e.Name}");
             if (e.GetType()== typeof(Item))
             {
                 return e as Item; // this seems like some funky hoodoo

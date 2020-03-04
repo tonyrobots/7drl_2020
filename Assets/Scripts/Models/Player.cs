@@ -18,7 +18,7 @@ public class Player:Actor
         Name = "Player";
         Name = TextAssetHelper.GetRandomLinefromTextAsset("names");
         Symbol = "@";
-        Color = Color.white;
+        Color = Color.black;
         // fovHelper.FOV(Tile);
     }
 

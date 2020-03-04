@@ -26,7 +26,7 @@ public abstract class Actor : Entity
     {
         Map.Game.Log($"{Name} takes a beat to assess the situation.");
 
-        // using this callback to represent turn end, probably a smarter way to handle
+        // using this callback to represent turn end, there's probably a smarter way to handle
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
     }

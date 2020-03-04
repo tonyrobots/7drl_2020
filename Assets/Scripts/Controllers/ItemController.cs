@@ -15,6 +15,7 @@ public class ItemController : MonoBehaviour
     void Start()
     {
         Item_data.RegisterEntityChangedCallback((entity) => { Refresh(entity, gameObject); });
+        Refresh(item_data, gameObject);
 
     }
 

@@ -28,10 +28,12 @@ public class Game
     public int DungeonLevel { get => dungeonLevel; set => dungeonLevel = value; }
 
     public Queue<Message> messageLog;
+    public Queue<Entity> entitiesToRender;
 
     public Game() {
         // messageLog = new MessageLog(this);
         messageLog = new Queue<Message>();
+        entitiesToRender = new Queue<Entity>();
     }
 
     public void Log(string simpleMessage) {

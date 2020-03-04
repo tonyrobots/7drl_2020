@@ -23,7 +23,7 @@ public abstract class Entity
     public string Name { get => name; set => name = value; }
     public bool IsVisible { get => isVisible; set { 
         isVisible = value;
-        // if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
+        if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
         }
     }
 
@@ -36,6 +36,7 @@ public abstract class Entity
     {
         cbEntityChanged -= callback;
     }
+
 
 
 }

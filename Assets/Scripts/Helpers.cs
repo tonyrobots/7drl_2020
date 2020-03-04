@@ -26,11 +26,16 @@ namespace Helpers
 
     public static class ItemEffects {
     
-        public static void HealingPotion(Actor target, Item item) {
+        public static void HealingPotion(Actor target, Item item, int value) {
             if (target.health.Hitpoints < target.health.MaxHitpoints) {
-                target.health.Heal(UnityEngine.Random.Range(4,10));
+                target.health.Heal(UnityEngine.Random.Range(4,value));
                 item.Consume();
             }
+        }
+
+        public static void Gold(Actor target, Item item, int value) {
+            target.gold += value;
+            item.Consume();
         }
     }
 

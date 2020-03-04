@@ -14,7 +14,7 @@ public class MonsterController : MonoBehaviour
     void Start()
     {
         Monster_data.RegisterEntityChangedCallback((entity) => { Refresh(entity, gameObject); });
-
+        Refresh(monster_data, gameObject);
     }
 
     // Update is called once per frame

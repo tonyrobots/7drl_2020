@@ -19,8 +19,9 @@ public class Monster : Actor
     //     health = new Health(Random.Range(2,15), this);
     //}
 
-    Monster() {
-    
+    public Monster(Map map) {
+        Map=map;
+        map.Game.entitiesToRender.Enqueue(this);
     }
 
     public void PlaceAtTile(Tile tile){
@@ -103,41 +104,18 @@ public class Monster : Actor
     public override void Die() {
         Map.Game.Log($"{Name} dies.");
         Symbol = "%";
-        Color = new Color(.4f,.2f,.1f);
+        Color = new Color(.6f,.4f,.2f,.4f);
         isAlive = false;
         isPassable = true;
         Name += " corpse";
-
+        DropGold();
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
     }
 
-    public static Monster GetRandomMonsterForLevel(int level)
-    {
-        // get csv line of monster data
-        string monsterString = Helpers.TextAssetHelper.GetRandomLinefromTextAsset("monsters").Trim();
-        // separate it out into fields and assign them
-        Monster newMonster = new Monster();
-        
-        if (monsterString == "") {
-            Debug.LogError("Got a blank line from the monster csv...returning default monster");
-            return new Monster();
-        }
-        string[] lines =  monsterString.Split(',');
-        newMonster.Name = lines[0];
-        newMonster.Symbol = lines[1];
-        Color c;
-        if (ColorUtility.TryParseHtmlString(lines[2], out c)) {
-            newMonster.Color = c;
-        } else {
-            newMonster.Color = Color.black;
-        }
-        newMonster.armor = System.Int32.Parse(lines[3]);
-        newMonster.strength = System.Int32.Parse(lines[4]);
-        newMonster.agility = System.Int32.Parse(lines[5]);
-        newMonster.gold = System.Int32.Parse(lines[6]);
-        newMonster.health = new Health(System.Int32.Parse(lines[7]), newMonster);
-        newMonster.level = System.Int32.Parse(lines[8]);
-        return newMonster;
+    public void DropGold() {
+        Item newGold = new Item(Tile, "$", new Color(.6f,.6f,0f), gold +" gold", (actor, item) => { Helpers.ItemEffects.Gold(actor, item, gold); });
+        Debug.Log("dropping gold " + gold);
     }
+
 }

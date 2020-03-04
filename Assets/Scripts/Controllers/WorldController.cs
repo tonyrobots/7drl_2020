@@ -50,35 +50,28 @@ public class WorldController : MonoBehaviour
         // why is this necessary?
         map.SetAllDungeonItemsVisibility();
 
-        // this is also probably wrong :O
-        GenerateMonsterGameObjects();
-        GenerateItemGameObjects();
 
         uiManager.UpdatePlayerStats(game);
         uiManager.UpdateMessageLog(game);
 
+        // generate gameobjects from the entities to render queue
+        ProcessEntitiesQueue();
 
         // Listen for player move event and end turn when it happens (this is probably very wrong way to go)
         player.RegisterEntityChangedCallback((entity) => { AdvanceTurn(); });
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void PrepGame(){
-        uiManager.UpdatePlayerStats(game);
-
-        game.gamestate = Game.GameStates.PLAYER_TURN;
-        uiManager.UpdateMessageLog(game);
-
-    }
 
     public void AdvanceTurn(int t = 1)
     {
+        ProcessEntitiesQueue();
+        
+        if (game.gamestate == Game.GameStates.PLAYER_DEAD) {
+            //necessary? trying to find stack overload/infinite loop problem
+            return;
+        }
+
         game.TurnCount++;
         game.Player.Tick(game.TurnCount);
 
@@ -113,6 +106,13 @@ public class WorldController : MonoBehaviour
         {
             item.DoTurn();
         }
+    }
+
+    void ProcessEntitiesQueue() {
+        while (game.entitiesToRender.Count > 0)
+        {
+            CreateEntityGO(game.entitiesToRender.Dequeue());
+        }    
     }
 
     void GenerateMapGameObjects(Map map) {
@@ -200,58 +200,35 @@ public class WorldController : MonoBehaviour
         }
     }
 
-    void GenerateMonsterGameObjects() {
-        foreach (Monster monster in map.Monsters) {
-            CreateMonsterGO(monster);
-        }
-    }
-
-    void GenerateItemGameObjects() {
-        foreach (Item item in map.Items) {
-            CreateItemGO(item);
-        }
-    }
-
-    void CreateItemGO(Item item) {
+    void CreateEntityGO(Entity e)
+    {
 
         // again is there some way to reduce duplication between this and monster equivalents?
-        GameObject go = new GameObject(item.Name);
-        ItemController ic = go.AddComponent<ItemController>();
+        GameObject go = new GameObject(e.Name);
+        Transform parent;
 
-        ic.Item_data = item;
+        if (e.GetType() == typeof(Item)) {
+            ItemController controller = go.AddComponent<ItemController>();
+            controller.Item_data =  e as Item;
+            parent = GameObject.Find("Items").GetComponent<Transform>();
+            go.transform.parent = parent;
+        } else if (e.GetType() == typeof(Monster)) {
+            MonsterController controller = go.AddComponent<MonsterController>();
+            controller.Monster_data = e as Monster;
+            parent = GameObject.Find("Monsters").GetComponent<Transform>();
+            go.transform.parent = parent;
+        }
 
-        Transform parent = GameObject.Find("Items").GetComponent<Transform>();
-
-        go.transform.position = new Vector3(item.Tile.X, item.Tile.Y, 0);
-        go.transform.parent = parent;
+        go.transform.position = new Vector3(e.Tile.X, e.Tile.Y, 0);
         TextMeshPro tmp = go.AddComponent<TextMeshPro>();
-        tmp.text = item.Symbol.ToString();
+        tmp.text = e.Symbol.ToString();
         tmp.fontSize = 9;
-        tmp.color = item.Color;
+        tmp.color = e.Color;
         tmp.alignment = TextAlignmentOptions.Center;
-        go.GetComponent<RectTransform>().sizeDelta = new Vector2(1,1);
-        ic.Refresh(item, go);
-    
-    }
+        go.GetComponent<RectTransform>().sizeDelta = new Vector2(1, 1);
+        // controller.Refresh(e, go);
 
-    void CreateMonsterGO(Monster monster)
-    {
-        GameObject monster_go = new GameObject(monster.Name);
-        MonsterController mc = monster_go.AddComponent<MonsterController>();
 
-        mc.Monster_data = monster;
-
-        Transform parent = GameObject.Find("Monsters").GetComponent<Transform>();
-
-        monster_go.transform.position = new Vector3(monster.Tile.X, monster.Tile.Y, 0);
-        monster_go.transform.parent = parent;
-        TextMeshPro tmp = monster_go.AddComponent<TextMeshPro>();
-        tmp.text = monster.Symbol.ToString();
-        tmp.fontSize = 9;
-        tmp.color = monster.Color;
-        tmp.alignment = TextAlignmentOptions.Center;
-        monster_go.GetComponent<RectTransform>().sizeDelta = new Vector2(1, 1);
-        mc.Refresh(monster, monster_go);
     }
 
     void GameOver() {

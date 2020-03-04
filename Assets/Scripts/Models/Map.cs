@@ -89,9 +89,8 @@ public class Map
             // Temp: add a monster to the middle of the room, except for first room
             if (i>0) {
                 //AddMonster( new Monster(GetTile(newRoom.Center().x, newRoom.Center().y),"M", Color.green, "scary monster") );
-                Monster newMonster = Monster.GetRandomMonsterForLevel(game.DungeonLevel);
-                newMonster.PlaceAtTile(GetTile(newRoom.Center().x, newRoom.Center().y));
-                AddMonster(newMonster);
+                PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomFloorTile());
+
             }
 
             // // Temp: add a healing potion to some places
@@ -107,16 +106,13 @@ public class Map
         // Temp: add some healing potions randomly around
         for (int j = 0; j < Random.Range(4, 10); j++)
         {
-            Item newItem = new Item(GetRandomFloorTile(), "!", Color.blue, "healing potion", (actor, item) => { Helpers.ItemEffects.HealingPotion(actor, item);});
-            AddItem(newItem);
+            Item newItem = new Item(GetRandomFloorTile(), "!", Color.blue, "healing potion", (actor, item) => { Helpers.ItemEffects.HealingPotion(actor, item, 10);});
         }
 
         // and a couple more monsters for good measure:
         for (int m = 0; m < 4; m++)
         {
-            Monster newMonster = Monster.GetRandomMonsterForLevel(game.DungeonLevel);
-            newMonster.PlaceAtTile(GetRandomFloorTile());
-            AddMonster(newMonster);
+            PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomFloorTile());
         }
     }
 
@@ -152,7 +148,7 @@ public class Map
     }
 
     public void SetAllDungeonItemsVisibility() {
-        // this shouldn't be necessary but is quick fix for an annoying bug (maybe)
+        // this shouldn't be necessary (?) but is a quick fix for an annoying bug (maybe)
         foreach (Item i in items)
         {
             i.IsVisible = i.Tile.IsVisible;
@@ -169,6 +165,39 @@ public class Map
     // {
     //     Monsters.Remove(monster);
     // }
+
+    public void PlaceRandomMonsterForLevel(int level, Tile tile)
+    {
+        // get csv line of monster data
+        string monsterString = Helpers.TextAssetHelper.GetRandomLinefromTextAsset("monsters").Trim();
+        // separate it out into fields and assign them
+        Monster newMonster = new Monster(this);
+
+        if (monsterString == "")
+        {
+            Debug.LogError("Got a blank line from the monster csv...no monster for you!");
+        }
+        string[] lines = monsterString.Split(',');
+        newMonster.Name = lines[0];
+        newMonster.Symbol = lines[1];
+        Color c;
+        if (ColorUtility.TryParseHtmlString(lines[2], out c))
+        {
+            newMonster.Color = c;
+        }
+        else
+        {
+            newMonster.Color = Color.black;
+        }
+        newMonster.armor = System.Int32.Parse(lines[3]);
+        newMonster.strength = System.Int32.Parse(lines[4]);
+        newMonster.agility = System.Int32.Parse(lines[5]);
+        newMonster.gold = System.Int32.Parse(lines[6]);
+        newMonster.health = new Health(System.Int32.Parse(lines[7]), newMonster);
+        newMonster.level = System.Int32.Parse(lines[8]);
+        newMonster.PlaceAtTile(tile);
+        AddMonster(newMonster);
+    }
 
     // Private methods
 

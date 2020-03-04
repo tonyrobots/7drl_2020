@@ -19,7 +19,10 @@ public class Item : Entity
         IsVisible = Tile.IsVisible;
         isPassable = true;
         myEffectFunction = itemEffectFunction;
+        Map.AddItem(this); // add item to the list the map maintains
         Tile.Enter(this); // register the item with the tile
+        Map.Game.entitiesToRender.Enqueue(this);
+
     }
 
     public void DoTurn() {
