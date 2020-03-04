@@ -9,21 +9,21 @@ public class Item : Entity
     public delegate void ItemEffectFunction(Actor target, Item self);
     ItemEffectFunction myEffectFunction;
 
-    public Item(Tile startingTile, char symbol, Color color, string name, ItemEffectFunction itemEffectFunction)
+    public Item(Tile startingTile, string symbol, Color color, string name, ItemEffectFunction itemEffectFunction)
     {
         Map = startingTile.Map;
         Symbol = symbol;
         Tile = startingTile;
         Color = color;
         Name = name;
-        isVisible = Tile.IsVisible;
+        IsVisible = Tile.IsVisible;
         isPassable = true;
         myEffectFunction = itemEffectFunction;
         Tile.Enter(this); // register the item with the tile
     }
 
     public void DoTurn() {
-        isVisible = Tile.IsVisible;
+        IsVisible = Tile.IsVisible;
         // call callbacks
         if (cbEntityChanged != null) cbEntityChanged(this);
     }
@@ -36,7 +36,11 @@ public class Item : Entity
     public void Consume() {
         Tile.Exit(this);
         Map.Items.Remove(this);
-        isVisible=false;
+        IsVisible=false;
+        if (cbEntityChanged != null) cbEntityChanged(this);
+    }
+
+    public void OnEntityChangedCallbacks() {
         if (cbEntityChanged != null) cbEntityChanged(this);
     }
 }

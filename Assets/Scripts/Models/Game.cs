@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class Game
 {
-    int _turnCount = 0;
+    int turnCount = 0;
+    int dungeonLevel = 1;
 
     public enum GameStates
     {
@@ -21,9 +22,10 @@ public class Game
     private int level=1;
 
     public Map CurrentMap { get => currentMap; set => currentMap = value; }
-    public int TurnCount { get => _turnCount; set => _turnCount = value; }
+    public int TurnCount { get => turnCount; set => turnCount = value; }
     public Player Player { get => player; set => player = value; }
     public int Level { get => level; set => level = value; }
+    public int DungeonLevel { get => dungeonLevel; set => dungeonLevel = value; }
 
     public Queue<Message> messageLog;
 
@@ -33,9 +35,7 @@ public class Game
     }
 
     public void Log(string simpleMessage) {
-        // probably a temporary function until we implement UI and stuff
-        // just want to have a single place to handle instead of calling debug.log everywhere
-        Debug.Log(simpleMessage);
+        //Debug.Log(simpleMessage);
         Message m = new Message(simpleMessage);
         messageLog.Enqueue(m);
     }

@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     {
         // register to call Refresh() on player change events
         player_data.RegisterEntityChangedCallback((entity) => { Refresh(entity, gameObject); });
+        
         MeshRenderer mr = GetComponent<MeshRenderer>();
         mr.sortingOrder=3;
 

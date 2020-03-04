@@ -6,9 +6,7 @@ using Helpers;
 public class Player:Actor
 {
 
-
-    FOVHelper fovHelper = new FOVHelper();
-
+    public FOVHelper fovHelper = new FOVHelper();
 
     public Player(Tile startingTile) // init by Tile
     {
@@ -19,8 +17,9 @@ public class Player:Actor
         health = new Health(20, this);
         Name = "Player";
         Name = TextAssetHelper.GetRandomLinefromTextAsset("names");
-        Symbol = '@';
-        Color = Color.black;
+        Symbol = "@";
+        Color = Color.white;
+        // fovHelper.FOV(Tile);
     }
 
     public void AttemptMove(int x, int y) {
@@ -44,7 +43,7 @@ public class Player:Actor
         fovHelper.FOV(Tile);
         if (targetTile.GetItemOnTile() != null) {
             Item i = targetTile.GetItemOnTile();
-            Map.Game.Log("You see a " + i.Name);
+            Map.Game.Log($"You see a {i.Name} here.");
             i.ActivateItem(this);
         }
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
@@ -64,8 +63,8 @@ public class Player:Actor
 
     public override void Die() {
         Map.Game.Log($"{Name} dies unceremoniously.");
-        Symbol = '%';
-        Color = new Color(.4f, .2f, .1f);
+        Symbol = "%";
+        Color = new Color(.4f, .2f, .2f);
         isAlive = false;
         Map.Game.gamestate = Game.GameStates.PLAYER_DEAD;
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks

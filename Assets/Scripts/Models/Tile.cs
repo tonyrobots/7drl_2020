@@ -75,7 +75,6 @@ public class Tile
     public void Enter(Entity e){
         // add to list of entities on this tile
         entities.Add(e);
-
     }
 
     public void Exit(Entity e) {

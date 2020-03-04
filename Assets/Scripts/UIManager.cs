@@ -10,6 +10,19 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI nameField = null;
     [SerializeField] private TextMeshProUGUI healthField = null;
     [SerializeField] private TextMeshProUGUI statusField = null;
+    [SerializeField] private TextMeshProUGUI DLevelField = null;
+    [SerializeField] private TextMeshProUGUI turnsField = null;
+    [SerializeField] private TextMeshProUGUI goldField = null;
+
+    [SerializeField] private TextMeshProUGUI strField = null;
+    [SerializeField] private TextMeshProUGUI agiField = null;
+    [SerializeField] private TextMeshProUGUI armorField = null;
+    [SerializeField] private TextMeshProUGUI dodgeField = null;
+    [SerializeField] private TextMeshProUGUI blockField = null;
+
+
+
+
     [SerializeField] private TextMeshProUGUI messagesField = null;
 
     // [SerializeField] private Text goldField;
@@ -26,9 +39,9 @@ public class UIManager : MonoBehaviour
         nameField.text = game.Player.Name;
 
         if (game.Player.health.Hitpoints > 0) {
-            healthField.text = $"Health:  {game.Player.health.Hitpoints}/{game.Player.health.MaxHitpoints}";
+            healthField.text = $"{game.Player.health.Hitpoints}/{game.Player.health.MaxHitpoints}";
         } else {
-            healthField.text = "Health: <#ff0000>Dead.</color>";
+            healthField.text = "<#ff0000>Dead.</color>";
         }
 
         string statusesList = "";
@@ -36,8 +49,15 @@ public class UIManager : MonoBehaviour
             statusesList += $"{status}     ";
         }
         statusField.text = statusesList;
-        // goldField.text = "Gold:      " + game.Player.Gold;
-        // mapLevelField.text = "Map Level: " + game.mapLevel;
+        goldField.text = $"{game.Player.gold}";
+        DLevelField.text = $"Dungeon Level: {game.DungeonLevel}";
+        turnsField.text = $"Turns: {game.TurnCount}";
+        strField.text = $"{game.Player.strength}";
+        agiField.text = $"{game.Player.agility}";
+        armorField.text = $"{game.Player.armor}";
+
+
+
     }
 
     public void UpdateMessageLog(Game game) {

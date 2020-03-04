@@ -8,17 +8,31 @@ public class Monster : Actor
     // if alert countdown > 0, monster is aware of player and moving toward them
     int alertCountdown = 0;
 
-    public Monster(Tile startingTile, char symbol, Color color, string name) {
-        Map = startingTile.Map;
-        Symbol = symbol;
-        Tile = startingTile;
-        Color = color;
-        Name = name;
-        isVisible = Tile.IsVisible;
-        isAlive = true;
-        health = new Health(Random.Range(2,15), this);
+    // public Monster(Tile startingTile, string symbol, Color color, string name) {
+    //     Map = startingTile.Map;
+    //     Symbol = symbol;
+    //     Tile = startingTile;
+    //     Color = color;
+    //     Name = name;
+    //     isVisible = Tile.IsVisible;
+    //     isAlive = true;
+    //     health = new Health(Random.Range(2,15), this);
+    //}
+
+    Monster() {
+    
     }
 
+    public void PlaceAtTile(Tile tile){
+        Tile = tile;
+        Map = tile.Map;
+        IsVisible=tile.IsVisible;
+    }
+
+    public void Initialize(char symbol, string hexcolor, string name) {
+        // set up with params
+        // place at tile
+    }
 
 
     public void DoTurn() {
@@ -38,10 +52,10 @@ public class Monster : Actor
         }
 
         // if you can see its tile, you can see the monster
-        isVisible = Tile.IsVisible;
+        IsVisible = Tile.IsVisible;
         // and it can see you, so it's alerted
-        if (isVisible) alertCountdown = 12;
-        if (!isVisible) alertCountdown--;
+        if (IsVisible) alertCountdown = 12;
+        if (!IsVisible) alertCountdown--;
 
         // call callbacks
         if (cbEntityChanged != null) cbEntityChanged(this); 
@@ -88,7 +102,7 @@ public class Monster : Actor
 
     public override void Die() {
         Map.Game.Log($"{Name} dies.");
-        Symbol = '%';
+        Symbol = "%";
         Color = new Color(.4f,.2f,.1f);
         isAlive = false;
         isPassable = true;
@@ -96,5 +110,34 @@ public class Monster : Actor
 
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
+    }
+
+    public static Monster GetRandomMonsterForLevel(int level)
+    {
+        // get csv line of monster data
+        string monsterString = Helpers.TextAssetHelper.GetRandomLinefromTextAsset("monsters").Trim();
+        // separate it out into fields and assign them
+        Monster newMonster = new Monster();
+        
+        if (monsterString == "") {
+            Debug.LogError("Got a blank line from the monster csv...returning default monster");
+            return new Monster();
+        }
+        string[] lines =  monsterString.Split(',');
+        newMonster.Name = lines[0];
+        newMonster.Symbol = lines[1];
+        Color c;
+        if (ColorUtility.TryParseHtmlString(lines[2], out c)) {
+            newMonster.Color = c;
+        } else {
+            newMonster.Color = Color.black;
+        }
+        newMonster.armor = System.Int32.Parse(lines[3]);
+        newMonster.strength = System.Int32.Parse(lines[4]);
+        newMonster.agility = System.Int32.Parse(lines[5]);
+        newMonster.gold = System.Int32.Parse(lines[6]);
+        newMonster.health = new Health(System.Int32.Parse(lines[7]), newMonster);
+        newMonster.level = System.Int32.Parse(lines[8]);
+        return newMonster;
     }
 }

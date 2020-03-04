@@ -88,7 +88,18 @@ public class Map
 
             // Temp: add a monster to the middle of the room, except for first room
             if (i>0) {
-                AddMonster( new Monster(GetTile(newRoom.Center().x, newRoom.Center().y),'M', Color.green, "scary monster") );
+                //AddMonster( new Monster(GetTile(newRoom.Center().x, newRoom.Center().y),"M", Color.green, "scary monster") );
+                Monster newMonster = Monster.GetRandomMonsterForLevel(game.DungeonLevel);
+                newMonster.PlaceAtTile(GetTile(newRoom.Center().x, newRoom.Center().y));
+                AddMonster(newMonster);
+            }
+
+            // and a couple more for good measure:
+            for (int m = 0; m < 1; m++)
+            {
+                Monster newMonster = Monster.GetRandomMonsterForLevel(game.DungeonLevel);
+                newMonster.PlaceAtTile(GetRandomFloorTile());
+                AddMonster(newMonster);
             }
 
             // // Temp: add a healing potion to some places
@@ -101,9 +112,9 @@ public class Map
         }
         GenerateHalls();
         // Temp: add some healing potions randomly around
-        for (int j = 0; j < Random.Range(4, 7); j++)
+        for (int j = 0; j < Random.Range(1, 3); j++)
         {
-            Item newItem = new Item(GetRandomFloorTile(), '!', Color.blue, "healing potion", (actor, item) => { Helpers.ItemEffects.HealingPotion(actor, item);});
+            Item newItem = new Item(GetRandomFloorTile(), "!", Color.blue, "healing potion", (actor, item) => { Helpers.ItemEffects.HealingPotion(actor, item);});
             AddItem(newItem);
         }
     }
@@ -127,7 +138,6 @@ public class Map
     public void AddMonster(Monster monster)
     {
         Monsters.Add(monster);
-        //Game.Log("adding monster at " + monster.Tile);
     }
 
     public void AddItem(Item item)
@@ -138,6 +148,19 @@ public class Map
 
     public void RemoveItem(Item item) {
         Items.Remove(item);
+    }
+
+    public void SetAllDungeonItemsVisibility() {
+        // this shouldn't be necessary but is quick fix for an annoying bug (maybe)
+        foreach (Item i in items)
+        {
+            i.IsVisible = i.Tile.IsVisible;
+        }
+
+        foreach (Monster m in monsters)
+        {
+            m.IsVisible = m.Tile.IsVisible;
+        }
     }
 
 

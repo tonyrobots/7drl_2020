@@ -12,6 +12,8 @@ public class WorldController : MonoBehaviour
     public Color lightColor;
     public Color dimColor;
 
+    public bool useAscii = false;
+
     Map map;
     Player player;
     Game game;
@@ -25,8 +27,13 @@ public class WorldController : MonoBehaviour
     {
         game = new Game();
 
-        map = new Map(60,40, game); 
-        map.GenerateRooms(10,10,25,4,3);
+        // big map
+        //map = new Map(60,40, game); 
+        //map.GenerateRooms(10,10,25,4,3);
+
+        // small map
+        map = new Map(25,15, game); 
+        map.GenerateRooms(10,10,3,3,3);
 
         game.CurrentMap = map;
 
@@ -40,12 +47,16 @@ public class WorldController : MonoBehaviour
 
         GenerateMapGameObjects(map);
 
+        // why is this necessary?
+        map.SetAllDungeonItemsVisibility();
+
         // this is also probably wrong :O
         GenerateMonsterGameObjects();
         GenerateItemGameObjects();
 
         uiManager.UpdatePlayerStats(game);
         uiManager.UpdateMessageLog(game);
+
 
         // Listen for player move event and end turn when it happens (this is probably very wrong way to go)
         player.RegisterEntityChangedCallback((entity) => { AdvanceTurn(); });
@@ -58,8 +69,19 @@ public class WorldController : MonoBehaviour
         
     }
 
+    public void PrepGame(){
+        uiManager.UpdatePlayerStats(game);
+
+        game.gamestate = Game.GameStates.PLAYER_TURN;
+        uiManager.UpdateMessageLog(game);
+
+    }
+
     public void AdvanceTurn(int t = 1)
     {
+        game.TurnCount++;
+        game.Player.Tick(game.TurnCount);
+
         uiManager.UpdatePlayerStats(game);
         if (game.gamestate == Game.GameStates.PLAYER_DEAD) {
             GameOver();
@@ -73,9 +95,7 @@ public class WorldController : MonoBehaviour
         }
         uiManager.UpdatePlayerStats(game);
 
-        game.TurnCount++;
         game.gamestate = Game.GameStates.PLAYER_TURN;
-        game.Player.Tick(game.TurnCount);
         uiManager.UpdateMessageLog(game);
     }
 
@@ -108,8 +128,15 @@ public class WorldController : MonoBehaviour
 
                 tile_go.transform.position = new Vector3(x,y,0);  
                 tile_go.transform.parent = parent;
-                SpriteRenderer sr = tile_go.AddComponent<SpriteRenderer>();
-                sr.sortingLayerName = "Floor";
+
+                if (useAscii) {
+                    TextMeshPro tmp = tile_go.AddComponent<TextMeshPro>();
+                    tmp.sortingOrder=-1;
+                } else {
+                    SpriteRenderer sr = tile_go.AddComponent<SpriteRenderer>();
+                    sr.sortingLayerName = "Floor";
+                }
+
                 RenderTile(tile_data, tile_go);
             }
             
@@ -117,28 +144,59 @@ public class WorldController : MonoBehaviour
     }
 
     void RenderTile(Tile tile, GameObject tile_go){
-        //Debug.Log("update tile game object: " + tile_go.name);
-        SpriteRenderer sr = tile_go.GetComponent<SpriteRenderer>();
-        if (tile.IsVisible)  {
-            sr.color = lightColor;
-        } else if (tile.IsExplored) {
-            sr.color = dimColor;
-        } else {
-            sr.color = Color.black;
-        }
-        switch (tile.Type)
-        {
-            case Tile.TileTypes.WALL:
-                sr.sprite = wallSprite;
-                break;
+        if (useAscii) {
+            TextMeshPro tmp = tile_go.GetComponent<TextMeshPro>();
+            if (tile.IsVisible)
+            {
+                tmp.color = lightColor;
+            }
+            else if (tile.IsExplored)
+            {
+                tmp.color = dimColor;
+            }
+            else
+            {
+                tmp.color = Color.black;
+            }
+            switch (tile.Type) {
+                case Tile.TileTypes.WALL:
+                    tmp.text = "#";
+                    tmp.alignment = TextAlignmentOptions.Center;
+
+                    break;
+                case Tile.TileTypes.FLOOR:
+                    tmp.text = ".";
+                    tmp.alignment = TextAlignmentOptions.Center;
+
+                    break;
+                default:
+                    break;
+            }
+
+        } else    
+        {        //Debug.Log("update tile game object: " + tile_go.name);
+            SpriteRenderer sr = tile_go.GetComponent<SpriteRenderer>();
+            if (tile.IsVisible)  {
+                sr.color = lightColor;
+            } else if (tile.IsExplored) {
+                sr.color = dimColor;
+            } else {
+                sr.color = Color.black;
+            }
+            switch (tile.Type)
+            {
+                case Tile.TileTypes.WALL:
+                    sr.sprite = wallSprite;
+                    break;
 
 
-            case Tile.TileTypes.FLOOR:
-                sr.sprite = floorSprite;
-                break;
+                case Tile.TileTypes.FLOOR:
+                    sr.sprite = floorSprite;
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -170,6 +228,7 @@ public class WorldController : MonoBehaviour
         tmp.text = item.Symbol.ToString();
         tmp.fontSize = 9;
         tmp.color = item.Color;
+        tmp.alignment = TextAlignmentOptions.Center;
         go.GetComponent<RectTransform>().sizeDelta = new Vector2(1,1);
         ic.Refresh(item, go);
     
@@ -190,6 +249,7 @@ public class WorldController : MonoBehaviour
         tmp.text = monster.Symbol.ToString();
         tmp.fontSize = 9;
         tmp.color = monster.Color;
+        tmp.alignment = TextAlignmentOptions.Center;
         monster_go.GetComponent<RectTransform>().sizeDelta = new Vector2(1, 1);
         mc.Refresh(monster, monster_go);
     }

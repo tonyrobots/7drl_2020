@@ -26,7 +26,7 @@ public class ItemController : MonoBehaviour
 
     public void Refresh(Entity entity, GameObject go)
     {
-        if (entity.isVisible)
+        if (entity.IsVisible)
         {
             transform.position = new Vector3(entity.Tile.X, entity.Tile.Y, 0);
             transform.localScale = new Vector3(1, 1, 1);
