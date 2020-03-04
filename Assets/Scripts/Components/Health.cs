@@ -58,7 +58,7 @@ public class Health
     public int Heal (int attemptedAmount) {
         int amount = Mathf.Min(attemptedAmount, (MaxHitpoints - Hitpoints));
         _hitpoints += amount;
-        _parent.Map.Game.Log($"You heal by {amount} health.");
+        _parent.Map.Game.Log($"You recover {amount} health.");
         return amount;
     }
 

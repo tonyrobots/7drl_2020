@@ -66,7 +66,7 @@ public class WorldController : MonoBehaviour
     public void AdvanceTurn(int t = 1)
     {
         ProcessEntitiesQueue();
-        
+
         if (game.gamestate == Game.GameStates.PLAYER_DEAD) {
             //necessary? trying to find stack overload/infinite loop problem
             return;
@@ -203,7 +203,6 @@ public class WorldController : MonoBehaviour
     void CreateEntityGO(Entity e)
     {
 
-        // again is there some way to reduce duplication between this and monster equivalents?
         GameObject go = new GameObject(e.Name);
         Transform parent;
 

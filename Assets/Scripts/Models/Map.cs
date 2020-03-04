@@ -199,6 +199,12 @@ public class Map
         AddMonster(newMonster);
     }
 
+    public void RevealAll() {
+        foreach (Tile t in Tiles) {
+            t.IsVisible = true;
+        }
+    }
+
     // Private methods
 
     void GenerateHalls()

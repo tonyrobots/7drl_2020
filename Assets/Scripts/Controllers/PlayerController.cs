@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     {
         // register to call Refresh() on player change events
         player_data.RegisterEntityChangedCallback((entity) => { Refresh(entity, gameObject); });
-        
+
         MeshRenderer mr = GetComponent<MeshRenderer>();
         mr.sortingOrder=3;
 
@@ -36,7 +36,9 @@ public class PlayerController : MonoBehaviour
             } else if (Input.GetKeyDown(KeyCode.RightArrow)) {
                 player_data.AttemptMove(1, 0);
             } else if (Input.GetKeyDown(KeyCode.Space)) {
-                player_data.Wait();
+                player_data.Wait();            
+            } else if (Input.GetKeyDown(KeyCode.Asterisk)) {
+                player_data.Map.RevealAll();
             }
         } else {
             // if player is dead, hitting space will restart the game completely
