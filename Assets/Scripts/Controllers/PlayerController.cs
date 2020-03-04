@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (player_data.isAlive) {
+        if (player_data.isAlive && player_data.Map.Game.gamestate == Game.GameStates.PLAYER_TURN) {
         // should use a separate input manager
             if (Input.GetKeyDown(KeyCode.UpArrow)) {
                 player_data.AttemptMove(0,1);
@@ -36,15 +36,37 @@ public class PlayerController : MonoBehaviour
             } else if (Input.GetKeyDown(KeyCode.RightArrow)) {
                 player_data.AttemptMove(1, 0);
             } else if (Input.GetKeyDown(KeyCode.Space)) {
-                player_data.Wait();            
-            } else if (Input.GetKeyDown(KeyCode.Asterisk)) {
-                player_data.Map.RevealAll();
+                player_data.Wait();
             }
-        } else {
+            else if (Input.GetKeyDown(KeyCode.G)){
+                // get item
+                player_data.PickUpItemAtCurrentLocation();
+            }
+            else if (Input.GetKeyDown(KeyCode.I))
+            {
+                // show inventory
+                Debug.Log(player_data.ListInventoryAsString());
+            }
+            else if (Input.GetKeyDown(KeyCode.M))
+                // explore map mode
+            {
+                player_data.Map.Game.gamestate = Game.GameStates.EXPLORE_MAP;
+            } else if (Input.GetKeyDown(KeyCode.KeypadMinus)) {
+                // reveal map (TODO disable later)
+                player_data.Map.RevealAll();
+
+            }
+            
+        } else if (player_data.isAlive == false) {
             // if player is dead, hitting space will restart the game completely
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+        } else if (player_data.Map.Game.gamestate == Game.GameStates.EXPLORE_MAP) {
+            // stub
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                player_data.Map.Game.gamestate = Game.GameStates.PLAYER_TURN;
             }
         }
     }

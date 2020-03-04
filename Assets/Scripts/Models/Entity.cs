@@ -13,6 +13,8 @@ public abstract class Entity
 
     bool isVisible = false;
     public bool isPassable = false;
+    public bool isCarryable = false;
+
 
     protected Action<Entity> cbEntityChanged;
 
@@ -55,6 +57,17 @@ public abstract class Entity
         Map = tile.Map;
         Tile.Enter(this);
         IsVisible = tile.IsVisible;
+    }
+
+    public void RemoveFromMap(){
+        if (Tile != null)
+        {
+            Tile.Exit(this);
+        }
+        Map.RemoveEntity(this);
+        Tile=null;
+        IsVisible = false;
+        // Map = null;
     }
 
     public void DropItem(Item i)

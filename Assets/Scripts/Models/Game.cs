@@ -12,7 +12,8 @@ public class Game
     {
         PLAYER_TURN,
         ENEMY_TURN,
-        PLAYER_DEAD
+        PLAYER_DEAD,
+        EXPLORE_MAP
     }
 
     public GameStates gamestate = GameStates.PLAYER_TURN;

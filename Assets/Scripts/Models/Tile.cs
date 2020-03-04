@@ -85,7 +85,7 @@ public class Tile
     public Actor GetActorOnTile() {
         foreach (Entity e in entities)
         {
-            if (!e.isPassable)
+            if (!e.isPassable) // This may have false positives!
             {
                 return e as Actor; // this seems like some funky hoodoo
             } 
@@ -96,13 +96,15 @@ public class Tile
     public Item GetItemOnTile() {
         foreach (Entity e in entities)
         {
-            if (e.GetType()== typeof(Item))
+            if (e.isCarryable)  // only works for carryable items. which is all of them, for now, but...
             {
                 return e as Item; // this seems like some funky hoodoo
             }
         }
         return null;
     }
+
+
 
     public List<Tile> GetAdjacentEmptyTiles() {
         List<Tile> emptyTiles = new List<Tile>();

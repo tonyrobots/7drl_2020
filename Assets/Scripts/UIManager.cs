@@ -20,7 +20,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI dodgeField = null;
     [SerializeField] private TextMeshProUGUI blockField = null;
 
-
+    [SerializeField] private TextMeshProUGUI weaponField = null;
 
 
     [SerializeField] private TextMeshProUGUI messagesField = null;
@@ -56,6 +56,8 @@ public class UIManager : MonoBehaviour
         agiField.text = $"{game.Player.agility}";
         armorField.text = $"{game.Player.armor}";
         dodgeField.text = $"{game.Player.EvadeChance()*100}%"; 
+        
+        if (game.Player.myWeapon != null) weaponField.text = $"{game.Player.myWeapon.Name} ({game.Player.myWeapon.DamageDice})";
 
 
 

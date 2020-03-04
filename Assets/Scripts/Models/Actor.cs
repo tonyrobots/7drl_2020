@@ -16,6 +16,8 @@ public abstract class Actor : Entity
 
     public Weapon myWeapon;
 
+    List<Item> inventory = new List<Item>();
+
     // TODO Will need to develop this system, probably also using components? Wish I were using unity more. Too late?
     public List<string> statuses = new List<string>();
     
@@ -31,6 +33,29 @@ public abstract class Actor : Entity
 
     }
 
+    public bool PickUpItemAtCurrentLocation() {
+        Item i = Tile.GetItemOnTile();
+        if (i != null)
+        {
+            AddToInventory(i);  
+            i.RemoveFromMap();
+            Map.Game.Log($"{Name} picked up a {i.Name}");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    bool AddToInventory(Item i) {
+        if (i.GetType() == typeof(Weapon)) {
+            WieldWeapon(i as Weapon);
+        } else {
+            inventory.Add(i);
+        }
+        return true;
+    }
+
     public virtual void Die() {
         Map.Game.Log($"{Name} dies, theoretically.");
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
@@ -42,10 +67,25 @@ public abstract class Actor : Entity
     }
 
     public void WieldWeapon(Weapon w) {
-        if (myWeapon != null) {
-            // drop current weapon
-
+        if (myWeapon != null && myWeapon.isCarryable ) {
+            // drop current weapon if it's carryable, which should be all weapons besides 'bare hands'
+            DropItem(myWeapon);
+            Map.Game.Log("you drop the " + myWeapon.Name);
         }
+        myWeapon = w;
+        Map.Game.Log("you wield the " + myWeapon.Name); // why isn't this working?
+        Debug.Log("you wield the " + myWeapon.Name);
+
+
+    }
+
+    public string ListInventoryAsString(){
+        string inv = "";
+        foreach (Item i in inventory)
+        {
+            inv += i.Name + ", ";
+        }
+        return inv;
     }
 
 }

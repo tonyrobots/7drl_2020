@@ -5,17 +5,22 @@ using System;
 
 public class Item : Entity
 {
-
+    
     public delegate void ItemEffectFunction(Actor target, Item self);
     ItemEffectFunction myEffectFunction;
 
+
     public Item(Map map) {
         Map = map;
+        isCarryable = true;
+
     }
 
     // convenience constuctor, should store this data in a text file or something
     public Item(Map map, string type)  {
         Map = map;
+        isCarryable = true;
+
 
         switch (type)
         {

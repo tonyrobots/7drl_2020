@@ -91,6 +91,11 @@ public class Map
                 //AddMonster( new Monster(GetTile(newRoom.Center().x, newRoom.Center().y),"M", Color.green, "scary monster") );
                 PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomFloorTile());
 
+            } else {
+                // temp
+                Weapon w = new Weapon(this, "3d6+1");
+                w.Initialize("Great Sword +1", "\\", Color.white);
+                w.PlaceAtTile(GetTile(newRoom.Center().x+1, newRoom.Center().y));
             }
 
             // // Temp: add a healing potion to some places
@@ -117,6 +122,9 @@ public class Map
         {
             PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomFloorTile());
         }
+        Weapon newWeapon = new Weapon(this, "3d6+1");
+        newWeapon.Initialize("Great Sword +1", "\\", Color.white);
+        newWeapon.PlaceAtTile(GetRandomFloorTile());
     }
 
 
@@ -188,6 +196,7 @@ public class Map
         foreach (Tile t in Tiles) {
             t.IsVisible = true;
         }
+        SetAllDungeonItemsVisibility();
     }
 
     // Private methods

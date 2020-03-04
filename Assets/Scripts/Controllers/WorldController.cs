@@ -214,7 +214,7 @@ public class WorldController : MonoBehaviour
         GameObject go = new GameObject(e.Name);
         Transform parent;
 
-        if (e.GetType() == typeof(Item)) {
+        if ((e.GetType() == typeof(Item)) || (e.GetType() == typeof(Weapon) )) {
             ItemController controller = go.AddComponent<ItemController>();
             controller.Item_data =  e as Item;
             parent = GameObject.Find("Items").GetComponent<Transform>();

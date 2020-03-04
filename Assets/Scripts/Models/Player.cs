@@ -21,6 +21,9 @@ public class Player:Actor
         Symbol = "@";
         Color = Color.black;
         // fovHelper.FOV(Tile);
+        myWeapon = new Weapon(Map, "1d6");
+        myWeapon.Initialize("Bare Hands", ".",Color.white);
+        myWeapon.isCarryable = false;
     }
 
     public void AttemptMove(int x, int y) {
@@ -42,11 +45,11 @@ public class Player:Actor
         PlaceAtTile(targetTile);
 
         fovHelper.FOV(Tile);
-        if (targetTile.GetItemOnTile() != null) {
-            Item i = targetTile.GetItemOnTile();
-            // Map.Game.Log($"You see a {i.Name} here.");
-            i.ActivateItem(this);
-        }
+        // if (targetTile.GetItemOnTile() != null) {
+        //     Item i = targetTile.GetItemOnTile();
+        //     // Map.Game.Log($"You see a {i.Name} here.");
+        //     i.ActivateItem(this);
+        // }
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
     }

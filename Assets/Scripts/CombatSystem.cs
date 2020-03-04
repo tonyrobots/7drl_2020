@@ -29,8 +29,7 @@ public class CombatSystem
         // TODO incororate weapons, at least for the player:
         int weaponDamage =0;
         if (attacker == game.Player) {
-            // weaponDamage += Random.Range(1,11); // this is a shim 
-            weaponDamage += Dice.Roll("2d6");
+            weaponDamage += Dice.Roll(attacker.myWeapon.DamageDice);
         }
         int damage = Mathf.CeilToInt(attacker.strength/5f) + weaponDamage - target.armor; 
 
