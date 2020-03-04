@@ -16,7 +16,19 @@ public abstract class Entity
 
     protected Action<Entity> cbEntityChanged;
 
-    public Tile Tile { get => tile; set => tile = value; }
+    public Tile Tile { get => tile; 
+        set 
+        {
+            // exit previous tile if any
+            if (tile != null) {
+                tile.Exit(this);
+            }
+
+            tile = value;
+            // enter new tile
+            tile.Enter(this);
+        }
+    }
     public string Symbol { get => symbol; set => symbol = value; }
     public Color Color { get => color; set => color = value; }
     public Map Map { get => map; set => map = value; }
@@ -35,6 +47,9 @@ public abstract class Entity
     public void UnregisterEntityChangedCallback(Action<Entity> callback)
     {
         cbEntityChanged -= callback;
+    }
+
+    public virtual void DoTurn() {
     }
 
 

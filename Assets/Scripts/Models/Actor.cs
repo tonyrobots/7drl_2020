@@ -14,7 +14,7 @@ public abstract class Actor : Entity
     public int gold = 0;
     public int level = 1;
 
-
+    public Weapon myWeapon;
 
     // TODO Will need to develop this system, probably also using components? Wish I were using unity more. Too late?
     public List<string> statuses = new List<string>();
@@ -34,6 +34,25 @@ public abstract class Actor : Entity
     public virtual void Die() {
         Map.Game.Log($"{Name} dies, theoretically.");
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
+    }
+
+    public virtual float EvadeChance() {
+        // this is temporary
+        return (agility/100f);
+    }
+
+    public void DropItem(Item i) {
+        // note this doesn't remove from inventory, it just puts the item next or under the dropper
+        int random_x = Random.Range(-1, 2);
+        int random_y = Random.Range(-1, 2);
+        i.Tile = Map.GetTile(random_x, random_y);
+    }
+
+    public void WieldWeapon(Weapon w) {
+        if (myWeapon != null) {
+            // drop current weapon
+
+        }
     }
 
 }

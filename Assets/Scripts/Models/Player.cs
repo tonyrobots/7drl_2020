@@ -13,7 +13,7 @@ public class Player:Actor
         Map = startingTile.Map;
         Tile = startingTile;
         fovHelper.FOV(Tile);
-        Tile.Enter(this);
+        //Tile.Enter(this);
         health = new Health(20, this);
         Name = "Player";
         Name = TextAssetHelper.GetRandomLinefromTextAsset("names");
@@ -38,13 +38,13 @@ public class Player:Actor
 
     void Move(Tile targetTile) {
         // de-register from current tile (is there a nicer way to handle this?)
-        Tile.Exit(this);
+        //Tile.Exit(this);
         Tile = targetTile;
-        Tile.Enter(this);
+        //Tile.Enter(this);
         fovHelper.FOV(Tile);
         if (targetTile.GetItemOnTile() != null) {
             Item i = targetTile.GetItemOnTile();
-            Map.Game.Log($"You see a {i.Name} here.");
+            // Map.Game.Log($"You see a {i.Name} here.");
             i.ActivateItem(this);
         }
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        

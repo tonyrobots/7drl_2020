@@ -5,19 +5,8 @@ using UnityEngine;
 
 public class Monster : Actor
 {
-    // if alert countdown > 0, monster is aware of player and moving toward them
+    // if alert countdown > 0, monster is aware of player and moving toward them (not implemented)
     int alertCountdown = 0;
-
-    // public Monster(Tile startingTile, string symbol, Color color, string name) {
-    //     Map = startingTile.Map;
-    //     Symbol = symbol;
-    //     Tile = startingTile;
-    //     Color = color;
-    //     Name = name;
-    //     isVisible = Tile.IsVisible;
-    //     isAlive = true;
-    //     health = new Health(Random.Range(2,15), this);
-    //}
 
     public Monster(Map map) {
         Map=map;
@@ -36,7 +25,7 @@ public class Monster : Actor
     }
 
 
-    public void DoTurn() {
+    public override void DoTurn() {
         // Monster should take their turn (even dead ones!)
 
         if (isAlive) {
@@ -68,9 +57,9 @@ public class Monster : Actor
         Tile targetTile;
         if (((targetTile = Map.GetTile(Tile.X + x, Tile.Y + y)) != null) && targetTile.IsPassable())
         { // if there is a tile there and it's passable
-            Tile.Exit(this);
+            //Tile.Exit(this);
             Tile = targetTile;
-            Tile.Enter(this);
+            //Tile.Enter(this);
            
         }
 
@@ -114,8 +103,10 @@ public class Monster : Actor
     }
 
     public void DropGold() {
-        Item newGold = new Item(Tile, "$", new Color(.3f,.3f,0f), gold +" gold", (actor, item) => { Helpers.ItemEffects.Gold(actor, item, gold); });
-        Debug.Log("dropping gold " + gold);
+        if (gold > 0) {
+            Item newGold = new Item(Tile, "$", new Color(.3f,.3f,0f), gold +" gold", (actor, item) => { ItemEffects.Gold(actor, item, gold); });
+            Debug.Log("dropping gold " + gold);
+        }
     }
 
 }

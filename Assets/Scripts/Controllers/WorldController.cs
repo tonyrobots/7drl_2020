@@ -62,7 +62,7 @@ public class WorldController : MonoBehaviour
         
     }
 
-
+    // Much of this (AdvanceTurn, Do Monster & Item turns) should be in Game object probably
     public void AdvanceTurn(int t = 1)
     {
         ProcessEntitiesQueue();
@@ -83,8 +83,9 @@ public class WorldController : MonoBehaviour
         game.gamestate = Game.GameStates.ENEMY_TURN; 
         for (int i = 0; i < t; i++)
         {
-            DoMonsterTurns();
-            DoItemTurns();
+            // DoMonsterTurns();
+            // DoItemTurns();
+            DoEntityTurns();
         }
         uiManager.UpdatePlayerStats(game);
 
@@ -92,19 +93,26 @@ public class WorldController : MonoBehaviour
         uiManager.UpdateMessageLog(game);
     }
 
-    public void DoMonsterTurns()
-    {
-        foreach (Monster monster in map.Monsters)
-        {
-            monster.DoTurn();
-        }
-    }
+    // public void DoMonsterTurns()
+    // {
+    //     foreach (Monster monster in map.Monsters)
+    //     {
+    //         monster.DoTurn();
+    //     }
+    // }
 
-    public void DoItemTurns()
+    // public void DoItemTurns()
+    // {
+    //     foreach (Item item in map.Items)
+    //     {
+    //         item.DoTurn();
+    //     }
+    // }
+
+    public void DoEntityTurns()
     {
-        foreach (Item item in map.Items)
-        {
-            item.DoTurn();
+        foreach (Entity e in map.Entities) {
+            e.DoTurn();
         }
     }
 

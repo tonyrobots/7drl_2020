@@ -55,6 +55,7 @@ public class UIManager : MonoBehaviour
         strField.text = $"{game.Player.strength}";
         agiField.text = $"{game.Player.agility}";
         armorField.text = $"{game.Player.armor}";
+        dodgeField.text = $"{game.Player.EvadeChance()*100}%"; 
 
 
 

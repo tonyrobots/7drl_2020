@@ -9,8 +9,8 @@ public class Map
     private Tile[,] tiles;
     private List<Tile> floorTiles;
     private List<Rect> rooms;
-    private List<Monster> monsters;
-    private List<Item> items;
+
+    private List<Entity> entities;
 
     private int width;
     private int height;
@@ -18,8 +18,8 @@ public class Map
     public Game Game { get => game; set => game = value; }
     public Tile[,] Tiles { get => tiles; set => tiles = value; }
     public List<Rect> Rooms { get => rooms; set => rooms = value; }
-    public List<Monster> Monsters { get => monsters; set => monsters = value; }
-    public List<Item> Items { get => items; set => items = value; }
+
+    public List<Entity> Entities { get => entities; set => entities = value; }
     public List<Tile> FloorTiles { get => floorTiles; set => floorTiles = value; }
 
     public int Width { get => width; set => width = value; }
@@ -32,8 +32,8 @@ public class Map
 
         Tiles = new Tile[width,height];
         floorTiles = new List<Tile>();
-        Monsters = new List<Monster>();
-        Items = new List<Item>();
+
+        Entities = new List<Entity>();
 
         for (int x = 0; x < width; x++)
         {
@@ -106,7 +106,7 @@ public class Map
         // Temp: add some healing potions randomly around
         for (int j = 0; j < Random.Range(4, 10); j++)
         {
-            Item newItem = new Item(GetRandomFloorTile(), "!", Color.blue, "healing potion", (actor, item) => { Helpers.ItemEffects.HealingPotion(actor, item, 10);});
+            Item newItem = new Item(GetRandomFloorTile(), "!", Color.blue, "healing potion", (actor, item) => { ItemEffects.HealingPotion(actor, item, 10);});
         }
 
         // and a couple more monsters for good measure:
@@ -132,44 +132,26 @@ public class Map
         return (Mathf.Abs(t1.X - t2.X) + Mathf.Abs(t1.Y - t2.Y));
     }
 
-    public void AddMonster(Monster monster)
-    {
-        Monsters.Add(monster);
+    public void AddEntity(Entity e) {
+        Entities.Add(e);
     }
 
-    public void AddItem(Item item)
-    {
-        // is there a way to genericize this so we don't need separate methods for items and monsters?
-        Items.Add(item);
+    public void RemoveEntity(Entity e) {
+        Entities.Remove(e);
     }
 
-    public void RemoveItem(Item item) {
-        Items.Remove(item);
-    }
 
     public void SetAllDungeonItemsVisibility() {
-        // this shouldn't be necessary (?) but is a quick fix for an annoying bug (maybe)
-        foreach (Item i in items)
-        {
-            i.IsVisible = i.Tile.IsVisible;
-        }
-
-        foreach (Monster m in monsters)
-        {
-            m.IsVisible = m.Tile.IsVisible;
+        foreach (Entity e in Entities) {
+            e.IsVisible = e.Tile.IsVisible;
         }
     }
 
-
-    // public void RemoveMonster(Monster monster)
-    // {
-    //     Monsters.Remove(monster);
-    // }
 
     public void PlaceRandomMonsterForLevel(int level, Tile tile)
     {
         // get csv line of monster data
-        string monsterString = Helpers.TextAssetHelper.GetRandomLinefromTextAsset("monsters").Trim();
+        string monsterString = Helpers.TextAssetHelper.GetRandomLinefromTextAsset("monsters",skipFirstLine:true).Trim();
         // separate it out into fields and assign them
         Monster newMonster = new Monster(this);
 
@@ -196,7 +178,8 @@ public class Map
         newMonster.health = new Health(System.Int32.Parse(lines[7]), newMonster);
         newMonster.level = System.Int32.Parse(lines[8]);
         newMonster.PlaceAtTile(tile);
-        AddMonster(newMonster);
+        // AddMonster(newMonster);
+        AddEntity(newMonster);
     }
 
     public void RevealAll() {

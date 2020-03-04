@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RogueSharp.DiceNotation;
 
 public class CombatSystem 
 {
@@ -25,11 +26,21 @@ public class CombatSystem
         bool crit = (Random.Range(1, 101) < attacker.agility/2);
         if (crit) msg += "<#ff2222>critically</color> ";
         // determine the damage
-        // TODO incororate weapons
-        int weaponDamage = Random.Range(1,11); // this is a shim 
-        int damage = Mathf.RoundToInt((attacker.strength)/5) + weaponDamage - target.armor; 
+        // TODO incororate weapons, at least for the player:
+        int weaponDamage =0;
+        if (attacker == game.Player) {
+            // weaponDamage += Random.Range(1,11); // this is a shim 
+            weaponDamage += Dice.Roll("2d6");
+        }
+        int damage = Mathf.CeilToInt(attacker.strength/5f) + weaponDamage - target.armor; 
+
+        if (damage <= 0) {
+            game.Log ($"{target.Name}'s armor absorbs the force of {attacker.Name}'s blow");
+            return;
+        }
+
         if (crit) damage *= 2;
-        msg += $"for {damage} damage.";
+        //msg += $"for {damage} damage.";
         game.Log(msg);
         // apply the damage
         target.health.TakeDamage(damage);
