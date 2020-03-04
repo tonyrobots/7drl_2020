@@ -94,14 +94,6 @@ public class Map
                 AddMonster(newMonster);
             }
 
-            // and a couple more for good measure:
-            for (int m = 0; m < 1; m++)
-            {
-                Monster newMonster = Monster.GetRandomMonsterForLevel(game.DungeonLevel);
-                newMonster.PlaceAtTile(GetRandomFloorTile());
-                AddMonster(newMonster);
-            }
-
             // // Temp: add a healing potion to some places
             // if (Random.Range(0,100) > 70) {
             //     AddItem( new Item(GetTile(newRoom.Center().x-1, newRoom.Center().y),'!', Color.blue, "healing potion"  ));
@@ -111,11 +103,20 @@ public class Map
 
         }
         GenerateHalls();
+
         // Temp: add some healing potions randomly around
-        for (int j = 0; j < Random.Range(1, 3); j++)
+        for (int j = 0; j < Random.Range(4, 10); j++)
         {
             Item newItem = new Item(GetRandomFloorTile(), "!", Color.blue, "healing potion", (actor, item) => { Helpers.ItemEffects.HealingPotion(actor, item);});
             AddItem(newItem);
+        }
+
+        // and a couple more monsters for good measure:
+        for (int m = 0; m < 4; m++)
+        {
+            Monster newMonster = Monster.GetRandomMonsterForLevel(game.DungeonLevel);
+            newMonster.PlaceAtTile(GetRandomFloorTile());
+            AddMonster(newMonster);
         }
     }
 

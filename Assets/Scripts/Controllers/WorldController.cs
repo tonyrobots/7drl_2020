@@ -28,12 +28,12 @@ public class WorldController : MonoBehaviour
         game = new Game();
 
         // big map
-        //map = new Map(60,40, game); 
-        //map.GenerateRooms(10,10,25,4,3);
+        map = new Map(60,40, game); 
+        map.GenerateRooms(10,10,25,4,3);
 
         // small map
-        map = new Map(25,15, game); 
-        map.GenerateRooms(10,10,3,3,3);
+        // map = new Map(25,15, game); 
+        // map.GenerateRooms(10,10,3,3,3);
 
         game.CurrentMap = map;
 
