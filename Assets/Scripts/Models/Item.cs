@@ -51,8 +51,10 @@ public class Item : Entity
     }
 
     public void ActivateItem(Actor target){
-        Debug.Log($"activating {this.Name} ");
-        myEffectFunction(target, this);
+        if (myEffectFunction != null) {
+            Debug.Log($"activating {this.Name} ");
+            myEffectFunction(target, this);
+        }
     }
 
     public void Consume() {
