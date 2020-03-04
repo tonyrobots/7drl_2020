@@ -30,7 +30,8 @@ public class Player:Actor
             Move(targetTile);
         } else if (targetTile.GetActorOnTile() != null ) {
             Actor targetEnemy = targetTile.GetActorOnTile();
-            Attack(targetEnemy);
+            Map.Game.combat.Attack(this, targetEnemy);
+            if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
         }
     
     }
@@ -50,11 +51,11 @@ public class Player:Actor
 
     }
 
-    void Attack(Actor targetEnemy) {
-        Map.Game.Log($"You swing at {targetEnemy.Name}");
-        targetEnemy.health.TakeDamage(Random.Range(4,10));
-        if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
-    }
+    // void Attack(Actor targetEnemy) {
+    //     Map.Game.Log($"You swing at {targetEnemy.Name}");
+    //     targetEnemy.health.TakeDamage(Random.Range(4,10));
+    //     if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
+    // }
 
     public void Tick(int currentTurn) {
         // do all "tick" actions that have registered. Need to figure out how to handle.

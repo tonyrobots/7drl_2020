@@ -85,7 +85,7 @@ public class Monster : Actor
     public void MoveTowardPlayer() {
         Tile playerTile = Map.Game.Player.Tile;
         if (Map.GetManhattanDistanceBetweenTiles(Tile, playerTile) == 1) {
-            Attack(Map.Game.Player);
+            Map.Game.combat.Attack(this,Map.Game.Player);
         } else {
             // replace this with some sort of pathfinding to player (a*?)
             MoveRandomly();

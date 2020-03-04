@@ -20,6 +20,10 @@ public class Game
     public Map currentMap;
     private Player player;
     private int level=1;
+    public CombatSystem combat;
+
+    public Queue<Message> messageLog;
+    public Queue<Entity> entitiesToRender;
 
     public Map CurrentMap { get => currentMap; set => currentMap = value; }
     public int TurnCount { get => turnCount; set => turnCount = value; }
@@ -27,13 +31,13 @@ public class Game
     public int Level { get => level; set => level = value; }
     public int DungeonLevel { get => dungeonLevel; set => dungeonLevel = value; }
 
-    public Queue<Message> messageLog;
-    public Queue<Entity> entitiesToRender;
 
     public Game() {
         // messageLog = new MessageLog(this);
         messageLog = new Queue<Message>();
         entitiesToRender = new Queue<Entity>();
+        combat = new CombatSystem(this);
+        
     }
 
     public void Log(string simpleMessage) {
