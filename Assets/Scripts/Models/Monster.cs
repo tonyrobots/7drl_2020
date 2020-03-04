@@ -114,7 +114,7 @@ public class Monster : Actor
     }
 
     public void DropGold() {
-        Item newGold = new Item(Tile, "$", new Color(.6f,.6f,0f), gold +" gold", (actor, item) => { Helpers.ItemEffects.Gold(actor, item, gold); });
+        Item newGold = new Item(Tile, "$", new Color(.3f,.3f,0f), gold +" gold", (actor, item) => { Helpers.ItemEffects.Gold(actor, item, gold); });
         Debug.Log("dropping gold " + gold);
     }
 
