@@ -9,25 +9,40 @@ public class Item : Entity
     public delegate void ItemEffectFunction(Actor target, Item self);
     ItemEffectFunction myEffectFunction;
 
-    public Item(Tile startingTile, string symbol, Color color, string name, ItemEffectFunction itemEffectFunction=null)
+    public Item(Map map) {
+        Map = map;
+    }
+
+    // convenience constuctor, should store this data in a text file or something
+    public Item(Map map, string type)  {
+        Map = map;
+
+        switch (type)
+        {
+            case "healing potion":
+                Initialize("healing potion", "!", Color.blue, (actor, item) => { ItemEffects.HealingPotion(actor, item, 10); });
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    public void Initialize(string name, string symbol, Color color,  ItemEffectFunction itemEffectFunction=null)
     {
-        Map = startingTile.Map;
         Symbol = symbol;
-        Tile = startingTile;
         Color = color;
         Name = name;
-        IsVisible = Tile.IsVisible;
         isPassable = true;
         myEffectFunction = itemEffectFunction;
-        Map.AddEntity(this);
-        Map.Game.entitiesToRender.Enqueue(this);
-
     }
+
+    // PlaceAtTile() is defined in Entity.cs
 
     public override void DoTurn() {
         IsVisible = Tile.IsVisible;
         // call callbacks
-        if (cbEntityChanged != null) cbEntityChanged(this);
+        OnEntityChangedCallbacks();
     }
 
     public void ActivateItem(Actor target){
@@ -36,11 +51,12 @@ public class Item : Entity
     }
 
     public void Consume() {
+        Debug.Log($"consuming {Name}");
         Tile.Exit(this);
-        // Map.Items.Remove(this);
         Map.Entities.Remove(this);
+        Name += " (consumed)";
         IsVisible=false;
-        if (cbEntityChanged != null) cbEntityChanged(this);
+        OnEntityChangedCallbacks();
     }
 
     public void OnEntityChangedCallbacks() {

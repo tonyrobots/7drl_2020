@@ -41,13 +41,6 @@ public abstract class Actor : Entity
         return (agility/100f);
     }
 
-    public void DropItem(Item i) {
-        // note this doesn't remove from inventory, it just puts the item next or under the dropper
-        int random_x = Random.Range(-1, 2);
-        int random_y = Random.Range(-1, 2);
-        i.Tile = Map.GetTile(random_x, random_y);
-    }
-
     public void WieldWeapon(Weapon w) {
         if (myWeapon != null) {
             // drop current weapon

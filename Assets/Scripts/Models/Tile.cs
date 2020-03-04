@@ -104,6 +104,26 @@ public class Tile
         return null;
     }
 
+    public List<Tile> GetAdjacentEmptyTiles() {
+        List<Tile> emptyTiles = new List<Tile>();
+        for (int x = -1; x < 2; x++)
+        {
+            for (int y = -1; y<2; y++) {
+                Tile t = Map.GetTile(X+x, Y+y);            
+                if ((t.entities.Count == 0) && t.IsPassable() ) {
+                    emptyTiles.Add(t);
+                }
+            }
+        }
+        if (emptyTiles.Count == 0) emptyTiles.Add(Map.GetTile(X,Y));
+        return emptyTiles;
+    }
+
+    public Tile GetRandomAdjacentEmptyTile() {
+        List<Tile> emptyTiles = GetAdjacentEmptyTiles();
+        return emptyTiles[UnityEngine.Random.Range(0,emptyTiles.Count)];
+    }
+
     public void RegisterTileChangedCallback(Action<Tile> callback) {
         cbTileChanged += callback;
     }

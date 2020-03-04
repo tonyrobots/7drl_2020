@@ -106,7 +106,10 @@ public class Map
         // Temp: add some healing potions randomly around
         for (int j = 0; j < Random.Range(4, 10); j++)
         {
-            Item newItem = new Item(GetRandomFloorTile(), "!", Color.blue, "healing potion", (actor, item) => { ItemEffects.HealingPotion(actor, item, 10);});
+            // Item newItem = new Item(GetRandomFloorTile(), "!", Color.blue, "healing potion", (actor, item) => { ItemEffects.HealingPotion(actor, item, 10);});
+            Item newItem = new Item(this);
+            newItem.Initialize("healing potion", "!", Color.blue, (actor, item) => { ItemEffects.HealingPotion(actor, item, 10); });
+            newItem.PlaceAtTile(GetRandomFloorTile());
         }
 
         // and a couple more monsters for good measure:
@@ -134,6 +137,7 @@ public class Map
 
     public void AddEntity(Entity e) {
         Entities.Add(e);
+        Game.entitiesToRender.Enqueue(e);
     }
 
     public void RemoveEntity(Entity e) {
@@ -178,8 +182,6 @@ public class Map
         newMonster.health = new Health(System.Int32.Parse(lines[7]), newMonster);
         newMonster.level = System.Int32.Parse(lines[8]);
         newMonster.PlaceAtTile(tile);
-        // AddMonster(newMonster);
-        AddEntity(newMonster);
     }
 
     public void RevealAll() {

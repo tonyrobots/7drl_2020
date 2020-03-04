@@ -12,6 +12,7 @@ public class Player:Actor
     {
         Map = startingTile.Map;
         Tile = startingTile;
+        // PlaceAtTile(startingTile);
         fovHelper.FOV(Tile);
         //Tile.Enter(this);
         health = new Health(20, this);
@@ -37,10 +38,9 @@ public class Player:Actor
     }
 
     void Move(Tile targetTile) {
-        // de-register from current tile (is there a nicer way to handle this?)
-        //Tile.Exit(this);
-        Tile = targetTile;
-        //Tile.Enter(this);
+
+        PlaceAtTile(targetTile);
+
         fovHelper.FOV(Tile);
         if (targetTile.GetItemOnTile() != null) {
             Item i = targetTile.GetItemOnTile();
@@ -50,12 +50,6 @@ public class Player:Actor
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
     }
-
-    // void Attack(Actor targetEnemy) {
-    //     Map.Game.Log($"You swing at {targetEnemy.Name}");
-    //     targetEnemy.health.TakeDamage(Random.Range(4,10));
-    //     if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
-    // }
 
     public void Tick(int currentTurn) {
         // do all "tick" actions that have registered. Need to figure out how to handle.

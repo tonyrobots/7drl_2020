@@ -27,6 +27,7 @@ public class ItemController : MonoBehaviour
 
     public void Refresh(Entity entity, GameObject go)
     {
+        gameObject.name = item_data.Name;
         if (entity.IsVisible)
         {
             transform.position = new Vector3(entity.Tile.X, entity.Tile.Y, 0);

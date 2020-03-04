@@ -25,6 +25,8 @@ public class MonsterController : MonoBehaviour
 
     public void Refresh(Entity entity, GameObject go)
     {
+        gameObject.name = monster_data.Name;
+
         if (entity.IsVisible)
         {
             transform.position = new Vector3(entity.Tile.X, entity.Tile.Y, 0);

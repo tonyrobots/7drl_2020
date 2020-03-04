@@ -10,14 +10,8 @@ public class Monster : Actor
 
     public Monster(Map map) {
         Map=map;
-        map.Game.entitiesToRender.Enqueue(this);
     }
 
-    public void PlaceAtTile(Tile tile){
-        Tile = tile;
-        Map = tile.Map;
-        IsVisible=tile.IsVisible;
-    }
 
     public void Initialize(char symbol, string hexcolor, string name) {
         // set up with params
@@ -58,9 +52,9 @@ public class Monster : Actor
         if (((targetTile = Map.GetTile(Tile.X + x, Tile.Y + y)) != null) && targetTile.IsPassable())
         { // if there is a tile there and it's passable
             //Tile.Exit(this);
-            Tile = targetTile;
+            // Tile = targetTile;
             //Tile.Enter(this);
-           
+            PlaceAtTile(targetTile);           
         }
 
     }
@@ -104,7 +98,10 @@ public class Monster : Actor
 
     public void DropGold() {
         if (gold > 0) {
-            Item newGold = new Item(Tile, "$", new Color(.3f,.3f,0f), gold +" gold", (actor, item) => { ItemEffects.Gold(actor, item, gold); });
+            // Item newGold = new Item(Tile, "$", new Color(.3f,.3f,0f), gold +" gold", (actor, item) => { ItemEffects.Gold(actor, item, gold); });
+            Item newGold = new Item(Map);
+            newGold.Initialize($"{gold} gold", "$", new Color(.3f, .3f, 0f), (actor, item) => { ItemEffects.Gold(actor, item, gold); });
+            DropItem(newGold);
             Debug.Log("dropping gold " + gold);
         }
     }
