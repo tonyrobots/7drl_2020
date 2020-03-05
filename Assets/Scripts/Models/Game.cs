@@ -21,6 +21,7 @@ public class Game
     }
 
     public GameStates gamestate = GameStates.PLAYER_TURN;
+    public bool allowDiagonalMovement=true;
     
     public Map currentMap;
     private Player player;
@@ -88,8 +89,8 @@ public class Game
         if (newState == GameStates.PLAYER_TURN) {
             wc.uiManager.ToggleInventory(player);
         } else {
-            wc.uiManager.ShowInventory(player);
             gamestate = newState;
+            wc.uiManager.ShowInventory(player);
         }
     }
 

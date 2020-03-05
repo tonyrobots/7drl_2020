@@ -8,6 +8,9 @@ public class Item : Entity
     
     public delegate void ItemEffectFunction(Actor target, Item self);
     ItemEffectFunction myEffectFunction;
+    Actor carriedBy = null;
+    public Actor CarriedBy { get => carriedBy; set => carriedBy = value; }
+
 
 
     public Item(Map map) {
@@ -59,10 +62,9 @@ public class Item : Entity
 
     public void Consume() {
         Debug.Log($"consuming {Name}");
-        Tile.Exit(this);
-        Map.Entities.Remove(this);
+        this.RemoveFromMap();
+        if (CarriedBy != null) CarriedBy.RemoveFromInventory(this);
         Name += " (consumed)";
-        IsVisible=false;
         OnEntityChangedCallbacks();
     }
 

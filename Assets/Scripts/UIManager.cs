@@ -34,8 +34,13 @@ public class UIManager : MonoBehaviour
     public bool InventoryIsOpen;
 
     public void Start() {
+        
 
     }
+
+    // public void InitializeUIManager(Game game){
+    //     game.Player.RegisterEntityChangedCallback((entity) => { UpdatePlayerStats(entity.Map.Game); });
+    // }
 
 
     public void UpdatePlayerStats(Game game)
@@ -90,14 +95,20 @@ public class UIManager : MonoBehaviour
 
     public void UpdateInventory(Player player){
         inventoryField.text = "";
-        if (player.Map.Game.gamestate == Game.GameStates.INVENTORY_DROP) inventoryField.text += "<#cc3333>DROP ITEM:</color>";
+        if (player.Map.Game.gamestate == Game.GameStates.INVENTORY_DROP) {
+            inventoryField.text += "<#ff1111><b>DROP ITEM:</b></color>" + Environment.NewLine;
+        } else if (player.Map.Game.gamestate == Game.GameStates.INVENTORY_USE) {
+            inventoryField.text += "<#33cc11><b>USE ITEM:</b></color>" + Environment.NewLine;
+        }
         char[] alpha = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
         for (int i = 0; i < player.Inventory.Count; i++)
         {
             Item item = player.Inventory[i];
             inventoryField.text += $"{alpha[i]}) {item.Name}{Environment.NewLine}";
         }
-    
+        if (player.Map.Game.gamestate != Game.GameStates.PLAYER_TURN) {
+            inventoryField.text += Environment.NewLine + "(hit <esc> to exit)";
+        }
     }
 
     public void UpdateMessageLog(Game game) {

@@ -9,9 +9,11 @@ public static class ItemEffects
     {
         if (target.health.Hitpoints < target.health.MaxHitpoints)
         {
-            target.health.Heal(UnityEngine.Random.Range(4, value));
             target.Map.Game.Log($"You drink the potion.");
+            target.health.Heal(UnityEngine.Random.Range(4, value));
             item.Consume();
+        } else {
+            target.Map.Game.Log($"You don't need that right now.");
         }
     }
 

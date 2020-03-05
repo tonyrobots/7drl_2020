@@ -64,7 +64,15 @@ public abstract class Actor : Entity
         } else {
             Inventory.Add(i);
         }
+        i.CarriedBy = this;
         return true;
+    }
+
+    public void RemoveFromInventory(Item i) {
+        if (Inventory.Contains(i)){
+            Inventory.Remove(i);
+            i.CarriedBy = null;
+        }
     }
 
     public virtual void Die() {
@@ -81,14 +89,14 @@ public abstract class Actor : Entity
         if (myWeapon != null && myWeapon.isCarryable ) {
             // drop current weapon if it's carryable, which should be all weapons besides 'bare hands'
             DropItem(myWeapon);
-            Map.Game.Log("you drop the " + myWeapon.Name);
+            Map.Game.Log("You drop the " + myWeapon.Name);
         }
         myWeapon = w;
-        Map.Game.Log("you wield the " + myWeapon.Name); // why isn't this working?
-        Debug.Log("you wield the " + myWeapon.Name);
+        Map.Game.Log("You wield the " + myWeapon.Name); // why isn't this working?
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
     }
+
 
     public string ListInventoryAsString(){
         string inv = "";

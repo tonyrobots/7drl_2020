@@ -72,7 +72,7 @@ public abstract class Entity
 
     public virtual void DropItem(Item i)
     {
-        // note this doesn't remove from inventory, it just puts the item next toor under the dropper
+        // note this doesn't remove from inventory, it just puts the item next to or under the dropper
         i.PlaceAtTile(Tile.GetRandomAdjacentEmptyTile());
     }
 

@@ -114,17 +114,17 @@ public class Map
             // Item newItem = new Item(GetRandomFloorTile(), "!", Color.blue, "healing potion", (actor, item) => { ItemEffects.HealingPotion(actor, item, 10);});
             Item newItem = new Item(this);
             newItem.Initialize("healing potion", "!", Color.blue, (actor, item) => { ItemEffects.HealingPotion(actor, item, 10); });
-            newItem.PlaceAtTile(GetRandomFloorTile());
+            newItem.PlaceAtTile(GetRandomEmptyFloorTile());
         }
 
         // and a couple more monsters for good measure:
         for (int m = 0; m < 1; m++)
         {
-            PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomFloorTile());
+            PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomEmptyFloorTile());
         }
         Weapon newWeapon = new Weapon(this, "3d6+1");
         newWeapon.Initialize("Great Sword +1", "\\", Color.white);
-        newWeapon.PlaceAtTile(GetRandomFloorTile());
+        newWeapon.PlaceAtTile(GetRandomEmptyFloorTile());
     }
 
 
@@ -134,8 +134,11 @@ public class Map
         
     }
 
-    Tile GetRandomFloorTile() {
-        return floorTiles[Random.Range(0, floorTiles.Count)];
+    Tile GetRandomEmptyFloorTile() {
+        while (true){
+            Tile t = floorTiles[Random.Range(0, floorTiles.Count)];
+            if (t.entities.Count == 0) return t;
+        }
     }
 
     public int GetManhattanDistanceBetweenTiles(Tile t1, Tile t2)

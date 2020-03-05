@@ -97,23 +97,44 @@ public class InputManager : MonoBehaviour
             // Player Moves
             case Game.GameStates.PLAYER_TURN:
 
-                if (Input.GetKeyDown(KeyCode.UpArrow))
+                if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Keypad8))
                 {
                     Game.Player.AttemptMove(0, 1);
                 }
-                else if (Input.GetKeyDown(KeyCode.DownArrow))
+                else if (Input.GetKeyDown(KeyCode.DownArrow)|| Input.GetKeyDown(KeyCode.Keypad2))
                 {
                     Game.Player.AttemptMove(0, -1);
                 }
-                else if (Input.GetKeyDown(KeyCode.LeftArrow))
+                else if (Input.GetKeyDown(KeyCode.LeftArrow)|| Input.GetKeyDown(KeyCode.Keypad4))
                 {
                     Game.Player.AttemptMove(-1, 0);
                 }
-                else if (Input.GetKeyDown(KeyCode.RightArrow))
+                else if (Input.GetKeyDown(KeyCode.RightArrow)|| Input.GetKeyDown(KeyCode.Keypad6))
                 {
                     Game.Player.AttemptMove(1, 0);
                 }
-                else if (Input.GetKeyDown(KeyCode.Space))
+
+               if (Game.allowDiagonalMovement) {
+                    if (Input.GetKeyDown(KeyCode.Keypad7)) {
+                        Game.Player.AttemptMove(-1, 1);
+                    }
+                    else if (Input.GetKeyDown(KeyCode.Keypad9))
+                    {
+                        Game.Player.AttemptMove(1, 1);
+                    }
+                    else if (Input.GetKeyDown(KeyCode.Keypad1))
+                    {
+                        Game.Player.AttemptMove(-1, -1);
+                    }
+                    else if (Input.GetKeyDown(KeyCode.Keypad3))
+                    {
+                        Game.Player.AttemptMove(1, -1);
+                    }
+                
+                
+                }
+
+                if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Keypad5))
                 {
                     Game.Player.Wait();
                 }
@@ -127,6 +148,11 @@ public class InputManager : MonoBehaviour
                     // open drop item menu
                     Game.OpenPlayerInventory(Game.GameStates.INVENTORY_DROP);
                 }
+                else if (Input.GetKeyDown(KeyCode.U))
+                {
+                    // open use item menu
+                    Game.OpenPlayerInventory(Game.GameStates.INVENTORY_USE);
+                }
 
                 else if (Input.GetKeyDown(KeyCode.I))
                 {
@@ -135,6 +161,11 @@ public class InputManager : MonoBehaviour
                     
                     Game.OpenPlayerInventory();
                 }
+
+                else if (Input.GetKeyDown(KeyCode.Escape)) {
+                    Game.ClosePlayerInventory();
+                }
+
                 else if (Input.GetKeyDown(KeyCode.M))
                 // explore map mode
                 {
@@ -149,6 +180,7 @@ public class InputManager : MonoBehaviour
             break;
 
             case Game.GameStates.INVENTORY_DROP:
+            case Game.GameStates.INVENTORY_USE:
                 if (Input.GetKeyDown(KeyCode.Escape))
                 {
                     // hide inventory
@@ -161,7 +193,9 @@ public class InputManager : MonoBehaviour
                 //     Game.Player.DropItem(Game.Player.Inventory[0]);
                 // }
                 foreach (char c in Input.inputString) {
-                    Debug.Log(c);
+                    if (c >= 'a' && c <= 'z') {
+                        ActOnItem(c);
+                    }
                 }
             break;
 
@@ -185,4 +219,42 @@ public class InputManager : MonoBehaviour
             break;
         }
     }
+
+
+    void ActOnItem(char c) 
+    {
+        int itemIndex = c - 'a';
+        if (itemIndex < game.Player.Inventory.Count) {
+            switch (game.gamestate)
+            {
+                case Game.GameStates.INVENTORY_USE:
+                    // use item
+                    game.Player.UseItem(game.Player.Inventory[itemIndex]);
+                    game.ClosePlayerInventory();
+                break;
+
+                case Game.GameStates.INVENTORY_DROP:
+                    game.Player.DropItem(game.Player.Inventory[itemIndex]);
+                    game.OpenPlayerInventory(Game.GameStates.INVENTORY_DROP);
+                break;
+                
+                default:
+                break;
+            }
+        }
+    
+    }
+    // // attempt to Drop the item corresponding with the character input
+    // void DropItem(char c) 
+    // {
+
+    
+    // }
+
+    // // attempt to use item corresponding with the char input
+    // void UseItem(char c) 
+    // {
+    // }
+
+
 }
