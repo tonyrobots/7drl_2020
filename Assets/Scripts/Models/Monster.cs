@@ -23,13 +23,13 @@ public class Monster : Actor
         // Monster should take their turn (even dead ones!)
 
         if (isAlive) {
+
         // replace this with some actual "AI" soon:
             if (alertCountdown > 0) {
                 MoveTowardPlayer();
             } else {
                 MoveRandomly();
             }
-
 
             // replace this something that iterates through all registered "tick" objects (or the other way 'round, somehow)
             health.Tick();
@@ -60,8 +60,15 @@ public class Monster : Actor
     }
 
     public void MoveRandomly() {
-        int random_x = Random.Range(-1, 2);
-        int random_y = Random.Range(-1, 2);
+        int random_x;
+        int random_y;
+        if (UnityEngine.Random.Range(0,1) == 0) {
+             random_x = Random.Range(-1, 2);
+             random_y =0;
+        } else {
+             random_y = Random.Range(-1, 2);
+             random_x =0;
+        }
         Move(random_x, random_y);
     }
 
@@ -70,7 +77,6 @@ public class Monster : Actor
         if (Map.GetManhattanDistanceBetweenTiles(Tile, playerTile) == 1) {
             Map.Game.combat.Attack(this,Map.Game.Player);
         } else {
-            // replace this with some sort of pathfinding to player (a*?)
             MoveRandomly();
         }
     }

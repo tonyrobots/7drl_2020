@@ -21,12 +21,17 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI blockField = null;
 
     [SerializeField] private TextMeshProUGUI weaponField = null;
+    [SerializeField] private TextMeshProUGUI armorWornField = null;
 
+    [SerializeField] private Transform inventoryPanel = null;
+    [SerializeField] private TextMeshProUGUI inventoryField = null;
 
     [SerializeField] private TextMeshProUGUI messagesField = null;
 
     // [SerializeField] private Text goldField;
     // [SerializeField] private Text mapLevelField;
+
+    public bool InventoryIsOpen;
 
     public void Start() {
 
@@ -44,7 +49,7 @@ public class UIManager : MonoBehaviour
             healthField.text = "<#ff0000>Dead.</color>";
         }
 
-        string statusesList = "";
+        string statusesList = $"{game.gamestate}";
         foreach (string status in game.Player.statuses) {
             statusesList += $"{status}     ";
         }
@@ -59,8 +64,40 @@ public class UIManager : MonoBehaviour
         
         if (game.Player.myWeapon != null) weaponField.text = $"{game.Player.myWeapon.Name} ({game.Player.myWeapon.DamageDice})";
 
+        UpdateInventory(game.Player);
 
+    }
 
+    public void ShowInventory(Player player) {
+        UpdateInventory(player);
+        inventoryPanel.localScale = new Vector3(1,1,1);
+        InventoryIsOpen = true;
+    }
+
+    public void HideInventory() {
+        inventoryPanel.localScale = new Vector3(0, 0, 0);
+        Debug.Log("closing inv panel");
+        InventoryIsOpen = false;
+    }
+
+    public void ToggleInventory(Player player) {
+        if (InventoryIsOpen) {
+            HideInventory();
+        } else {
+            ShowInventory(player);
+        } 
+    }
+
+    public void UpdateInventory(Player player){
+        inventoryField.text = "";
+        if (player.Map.Game.gamestate == Game.GameStates.INVENTORY_DROP) inventoryField.text += "<#cc3333>DROP ITEM:</color>";
+        char[] alpha = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
+        for (int i = 0; i < player.Inventory.Count; i++)
+        {
+            Item item = player.Inventory[i];
+            inventoryField.text += $"{alpha[i]}) {item.Name}{Environment.NewLine}";
+        }
+    
     }
 
     public void UpdateMessageLog(Game game) {

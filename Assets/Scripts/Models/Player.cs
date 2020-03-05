@@ -35,6 +35,7 @@ public class Player:Actor
         } else if (targetTile.GetActorOnTile() != null ) {
             Actor targetEnemy = targetTile.GetActorOnTile();
             Map.Game.combat.Attack(this, targetEnemy);
+            Map.Game.AdvanceTurn();
             if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
         }
     
@@ -50,6 +51,7 @@ public class Player:Actor
             // Map.Game.Log($"You see a {i.Name} here.");
             i.ActivateItem(this);
         }
+        Map.Game.AdvanceTurn();
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
     }
@@ -59,13 +61,21 @@ public class Player:Actor
         health.Tick();
     }
 
+
     public override void Die() {
         Map.Game.Log($"{Name} dies unceremoniously.");
+        Debug.Log("player dead");
         Symbol = "%";
         Color = new Color(.4f, .2f, .2f);
         isAlive = false;
         Map.Game.gamestate = Game.GameStates.PLAYER_DEAD;
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
 
+    }
+
+    public override void DropItem(Item i) {
+        Inventory.Remove(i);
+        base.DropItem(i);
+        Map.Game.AdvanceTurn();
     }
 }

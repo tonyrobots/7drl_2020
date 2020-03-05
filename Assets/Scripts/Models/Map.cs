@@ -89,7 +89,7 @@ public class Map
             // Temp: add a monster to the middle of the room, except for first room
             if (i>0) {
                 //AddMonster( new Monster(GetTile(newRoom.Center().x, newRoom.Center().y),"M", Color.green, "scary monster") );
-                PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomFloorTile());
+                //PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomFloorTile());
 
             } else {
                 // temp
@@ -118,7 +118,7 @@ public class Map
         }
 
         // and a couple more monsters for good measure:
-        for (int m = 0; m < 4; m++)
+        for (int m = 0; m < 1; m++)
         {
             PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomFloorTile());
         }

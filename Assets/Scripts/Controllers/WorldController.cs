@@ -20,7 +20,10 @@ public class WorldController : MonoBehaviour
 
     public GameObject player_go;
     public UIManager uiManager;
+
+
     PlayerController playerController;
+    InputManager inputManager;
 
     // Start is called before the first frame update
     void Start()
@@ -28,12 +31,12 @@ public class WorldController : MonoBehaviour
         game = new Game();
 
         // big map
-        map = new Map(60,40, game); 
-        map.GenerateRooms(10,10,25,4,3);
+        // map = new Map(60,40, game); 
+        // map.GenerateRooms(10,10,25,4,3);
 
         // small map
-        // map = new Map(25,15, game); 
-        // map.GenerateRooms(10,10,3,3,3);
+        map = new Map(25,15, game); 
+        map.GenerateRooms(10,10,3,3,3);
 
         game.CurrentMap = map;
 
@@ -53,68 +56,29 @@ public class WorldController : MonoBehaviour
 
         uiManager.UpdatePlayerStats(game);
         uiManager.UpdateMessageLog(game);
+        uiManager.HideInventory();
+
+        inputManager = gameObject.AddComponent<InputManager>();
+        inputManager.Game = game;
 
         // generate gameobjects from the entities to render queue
         ProcessEntitiesQueue();
 
         // Listen for player move event and end turn when it happens (this is probably very wrong way to go)
-        player.RegisterEntityChangedCallback((entity) => { AdvanceTurn(); });
+        //player.RegisterEntityChangedCallback((entity) => { AdvanceTurn(); });
         
     }
 
     // Much of this (AdvanceTurn, Do Monster & Item turns) should be in Game object probably
-    public void AdvanceTurn(int t = 1)
+    public void FinalizeTurn()
     {
         ProcessEntitiesQueue();
-
-        if (game.gamestate == Game.GameStates.PLAYER_DEAD) {
-            //necessary? trying to find stack overload/infinite loop problem
-            return;
-        }
-
-        game.TurnCount++;
-        game.Player.Tick(game.TurnCount);
-
         uiManager.UpdatePlayerStats(game);
-        if (game.gamestate == Game.GameStates.PLAYER_DEAD) {
-            GameOver();
-            return;
-        }
-        game.gamestate = Game.GameStates.ENEMY_TURN; 
-        for (int i = 0; i < t; i++)
-        {
-            // DoMonsterTurns();
-            // DoItemTurns();
-            DoEntityTurns();
-        }
-        uiManager.UpdatePlayerStats(game);
-
-        game.gamestate = Game.GameStates.PLAYER_TURN;
         uiManager.UpdateMessageLog(game);
     }
 
-    // public void DoMonsterTurns()
-    // {
-    //     foreach (Monster monster in map.Monsters)
-    //     {
-    //         monster.DoTurn();
-    //     }
-    // }
 
-    // public void DoItemTurns()
-    // {
-    //     foreach (Item item in map.Items)
-    //     {
-    //         item.DoTurn();
-    //     }
-    // }
 
-    public void DoEntityTurns()
-    {
-        foreach (Entity e in map.Entities) {
-            e.DoTurn();
-        }
-    }
 
     void ProcessEntitiesQueue() {
         while (game.entitiesToRender.Count > 0)
@@ -238,10 +202,5 @@ public class WorldController : MonoBehaviour
 
     }
 
-    void GameOver() {
-        player.UnregisterEntityChangedCallback((entity) => { AdvanceTurn(); });
 
-        game.Log("Game is over. Hit space to restart.");
-
-    }
 }
