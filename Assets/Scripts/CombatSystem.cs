@@ -43,6 +43,9 @@ public class CombatSystem
         game.Log(msg);
         // apply the damage
         target.health.TakeDamage(damage);
+        if (target.isAlive == false && attacker== game.Player) {
+            game.Player.GainXP(target.XPvalue());
+        }
     }
 
     public bool Evaded(Actor attacker, Actor target) {

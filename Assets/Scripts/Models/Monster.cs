@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 public class Monster : Actor
+
 {
     // if alert countdown > 0, monster is aware of player and moving toward them (not implemented)
     int alertCountdown = 0;
@@ -105,11 +106,15 @@ public class Monster : Actor
     public void DropGold() {
         if (gold > 0) {
             // Item newGold = new Item(Tile, "$", new Color(.3f,.3f,0f), gold +" gold", (actor, item) => { ItemEffects.Gold(actor, item, gold); });
-            Item newGold = new Item(Map);
-            newGold.Initialize($"{gold} gold", "$", new Color(.3f, .3f, 0f), (actor, item) => { ItemEffects.Gold(actor, item, gold); });
+            Item newGold = new Item();
+            newGold.Initialize($"{gold} gold", "$", new Color(.3f, .3f, 0f), (actor, item) => { ItemEffects.Gold(actor, item, gold); }, true);
             DropItem(newGold);
             Debug.Log("dropping gold " + gold);
         }
+    }
+
+    public override int XPvalue() {
+        return (health.MaxHitpoints + strength + agility); //this is a terrible XP formula, TODO fix it!
     }
 
 }

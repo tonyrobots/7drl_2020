@@ -106,6 +106,7 @@ public class InputManager : MonoBehaviour
                     Game.Player.AttemptMove(0, -1);
                 }
                 else if (Input.GetKeyDown(KeyCode.LeftArrow)|| Input.GetKeyDown(KeyCode.Keypad4))
+                // else if (Input.GetAxis("Horizontal") <  -.1)
                 {
                     Game.Player.AttemptMove(-1, 0);
                 }
@@ -164,6 +165,12 @@ public class InputManager : MonoBehaviour
 
                 else if (Input.GetKeyDown(KeyCode.Escape)) {
                     Game.ClosePlayerInventory();
+                }
+
+                else if (Input.GetKeyDown(KeyCode.S))
+                {
+                    Game.DescendToNextLevel();
+                    Debug.Log("descending?");
                 }
 
                 else if (Input.GetKeyDown(KeyCode.M))

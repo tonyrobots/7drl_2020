@@ -17,6 +17,8 @@ public abstract class Actor : Entity
     public Weapon myWeapon;
 
     List<Item> inventory = new List<Item>();
+    public int INVENTORY_LIMIT = 4;
+
     public List<Item> Inventory { get => inventory; set => inventory = value; }
 
 
@@ -61,11 +63,16 @@ public abstract class Actor : Entity
     bool AddToInventory(Item i) {
         if (i.GetType() == typeof(Weapon)) {
             WieldWeapon(i as Weapon);
-        } else {
+            i.CarriedBy = this;
+            return true;
+        } else if (inventory.Count < INVENTORY_LIMIT) {
             Inventory.Add(i);
+            i.CarriedBy = this;
+            return true;
+        } else {
+            Map.Game.Log("Can't pick that up because your inventory is full.");
+            return false;
         }
-        i.CarriedBy = this;
-        return true;
     }
 
     public void RemoveFromInventory(Item i) {
@@ -85,6 +92,10 @@ public abstract class Actor : Entity
         return (agility/100f);
     }
 
+    public virtual int XPvalue() {
+        return 0;
+    }
+
     public void WieldWeapon(Weapon w) {
         if (myWeapon != null && myWeapon.isCarryable ) {
             // drop current weapon if it's carryable, which should be all weapons besides 'bare hands'
@@ -92,7 +103,7 @@ public abstract class Actor : Entity
             Map.Game.Log("You drop the " + myWeapon.Name);
         }
         myWeapon = w;
-        Map.Game.Log("You wield the " + myWeapon.Name); // why isn't this working?
+        Map.Game.Log("You wield the " + myWeapon.Name); 
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
     }

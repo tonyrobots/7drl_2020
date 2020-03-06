@@ -44,5 +44,10 @@ public class MonsterController : MonoBehaviour
 
     }
 
+    void OnDestroy()
+    {
+        monster_data.UnregisterEntityChangedCallback((entity) => { Refresh(entity, gameObject); });
+    }
+
 
 }

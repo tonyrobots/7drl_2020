@@ -14,7 +14,7 @@ public class Tile
     }
     TileTypes _type;
 
-    Action<Tile> cbTileChanged;    
+    public Action<Tile> cbTileChanged;    
 
     bool isExplored = false;
     bool isVisible = false;

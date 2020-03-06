@@ -23,7 +23,7 @@ public class Game
     public GameStates gamestate = GameStates.PLAYER_TURN;
     public bool allowDiagonalMovement=true;
     
-    public Map currentMap;
+    private Map currentMap;
     private Player player;
     private int level=1;
     public CombatSystem combat;
@@ -43,6 +43,11 @@ public class Game
         messageLog = new Queue<Message>();
         entitiesToRender = new Queue<Entity>();
         combat = new CombatSystem(this);
+
+        currentMap = GenerateMap();
+        player = new Player(currentMap.GetAppropriateStartingTile());
+
+
 
         // this is (should be) the ONLY reference to a unity object within the models layer
         wc = Object.FindObjectOfType<WorldController>();
@@ -109,6 +114,55 @@ public class Game
     public void GameOver()
     {   
         Log("Game is over. Hit space to restart.");
+
+    }
+
+    public void DescendToNextLevel() {
+        ChangeDungeonLevel(dungeonLevel+1);
+    }
+
+    public void ChangeDungeonLevel(int newLevel) {
+        // clear out old level
+        // old map objects will just be handled by GC, we just have to handle the unity GOs
+
+        // clear tile callbacks
+        foreach (Tile t in currentMap.Tiles)
+        {
+            t.cbTileChanged = null;
+        }
+        
+        wc.DestroyMapGameObjects(currentMap);
+
+        currentMap = null;
+
+        // generate new map
+        currentMap = GenerateMap(newLevel);
+
+        wc.GenerateMapGameObjects(currentMap);
+
+        // place player
+        player.Map = currentMap;
+        player.Move(currentMap.GetAppropriateStartingTile());
+        player.fovHelper.FOV(player.Tile);
+
+        // refresh map game objects
+        currentMap.SetAllDungeonItemsVisibility();
+        wc.ProcessEntitiesQueue();
+        wc.FinalizeTurn();
+    }
+
+    Map GenerateMap(int level=1){
+        Map newMap;
+
+        // big map
+        // newMap = new Map(60,40, game); 
+        // newMap.GenerateRooms(10,10,25,4,3);
+
+        // small map
+        newMap = new Map(25, 15, this);
+        newMap.GenerateRooms(10, 10, 3, 3, 3);
+
+        return newMap;
 
     }
 }

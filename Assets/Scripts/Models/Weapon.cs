@@ -7,9 +7,21 @@ public class Weapon:Item {
     string damageDice;
     public string DamageDice { get => damageDice; set => damageDice = value; }
 
-    public Weapon(Map map, string damageDice) : base(map) {
+    int weight;
+    public int Weight { get => weight; set => weight = value; }
+
+
+
+    public Weapon() : base() {
+    }
+
+    public void Initialize(string name, string symbol, Color color, string damageDice, int weight,  ItemEffectFunction itemEffectFunction = null) {
+        Name = name;
+        Symbol = symbol;
+        Color = color;
         DamageDice = damageDice;
-        isCarryable = true;
+        Weight = weight;
+        myEffectFunction = itemEffectFunction;
     }
 
 }

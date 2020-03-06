@@ -30,23 +30,12 @@ public class WorldController : MonoBehaviour
     {
         game = new Game();
 
-        // big map
-        // map = new Map(60,40, game); 
-        // map.GenerateRooms(10,10,25,4,3);
+        map = game.CurrentMap;
+        player = game.Player;
 
-        // small map
-        map = new Map(25,15, game); 
-        map.GenerateRooms(10,10,3,3,3);
-
-        game.CurrentMap = map;
-
-        player = new Player(map.GetAppropriateStartingTile());
         playerController = player_go.GetComponent<PlayerController>();
         playerController.Player_data = player;
         playerController.Refresh(player, player_go);
-
-        game.Player = player;
-
 
         GenerateMapGameObjects(map);
 
@@ -80,14 +69,14 @@ public class WorldController : MonoBehaviour
 
 
 
-    void ProcessEntitiesQueue() {
+    public void ProcessEntitiesQueue() {
         while (game.entitiesToRender.Count > 0)
         {
             CreateEntityGO(game.entitiesToRender.Dequeue());
         }    
     }
 
-    void GenerateMapGameObjects(Map map) {
+    public void GenerateMapGameObjects(Map map) {
 
         Transform parent = GameObject.Find("Tiles").GetComponent<Transform>();
         for (int x = 0; x < map.Width; x++)
@@ -112,6 +101,26 @@ public class WorldController : MonoBehaviour
                 RenderTile(tile_data, tile_go);
             }
             
+        }
+    }
+
+
+   public void DestroyMapGameObjects(Map map) {
+        GameObject items = GameObject.Find("Items");
+        foreach (Transform t in items.transform) {
+            Item i = t.gameObject.GetComponent<ItemController>().Item_data;
+            if (i.CarriedBy == map.Game.Player) continue; // don't destroy game objects for items carried by the player. seems brittle :P
+            Destroy(t.gameObject);
+        }
+        GameObject monsters = GameObject.Find("Monsters");
+        foreach (Transform t in monsters.transform)
+        {
+            Destroy(t.gameObject);
+        }
+        GameObject tiles = GameObject.Find("Tiles");
+        foreach (Transform t in tiles.transform)
+        {
+            Destroy(t.gameObject);
         }
     }
 

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using RogueSharp.DiceNotation;
+
 
 public class Map
 {
@@ -87,44 +89,31 @@ public class Map
             }
 
             // Temp: add a monster to the middle of the room, except for first room
-            if (i>0) {
-                //AddMonster( new Monster(GetTile(newRoom.Center().x, newRoom.Center().y),"M", Color.green, "scary monster") );
-                //PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomFloorTile());
-
-            } else {
-                // temp
-                Weapon w = new Weapon(this, "3d6+1");
-                w.Initialize("Great Sword +1", "\\", Color.white);
-                w.PlaceAtTile(GetTile(newRoom.Center().x+1, newRoom.Center().y));
-            }
-
-            // // Temp: add a healing potion to some places
-            // if (Random.Range(0,100) > 70) {
-            //     AddItem( new Item(GetTile(newRoom.Center().x-1, newRoom.Center().y),'!', Color.blue, "healing potion"  ));
+            // if (i>0) {
+            //     AddMonster( new Monster(GetTile(newRoom.Center().x, newRoom.Center().y),"M", Color.green, "scary monster") );
+            //     PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomFloorTile());
             // }
-
 
 
         }
         GenerateHalls();
 
         // Temp: add some healing potions randomly around
-        for (int j = 0; j < Random.Range(4, 10); j++)
+        for (int j = 0; j < Random.Range(2, 5); j++)
         {
             // Item newItem = new Item(GetRandomFloorTile(), "!", Color.blue, "healing potion", (actor, item) => { ItemEffects.HealingPotion(actor, item, 10);});
-            Item newItem = new Item(this);
+            Item newItem = new Item();
             newItem.Initialize("healing potion", "!", Color.blue, (actor, item) => { ItemEffects.HealingPotion(actor, item, 10); });
             newItem.PlaceAtTile(GetRandomEmptyFloorTile());
         }
 
-        // and a couple more monsters for good measure:
+        // and  couple  monsters for good measure:
         for (int m = 0; m < 1; m++)
         {
             PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomEmptyFloorTile());
         }
-        Weapon newWeapon = new Weapon(this, "3d6+1");
-        newWeapon.Initialize("Great Sword +1", "\\", Color.white);
-        newWeapon.PlaceAtTile(GetRandomEmptyFloorTile());
+        Weapon w = GenerateWeapon();
+        w.PlaceAtTile(GetRandomEmptyFloorTile());
     }
 
 
@@ -193,6 +182,35 @@ public class Map
         newMonster.health = new Health(System.Int32.Parse(lines[7]), newMonster);
         newMonster.level = System.Int32.Parse(lines[8]);
         newMonster.PlaceAtTile(tile);
+    }
+
+    public Weapon GenerateWeapon(int Level=1) {
+        string weaponString = Helpers.TextAssetHelper.GetRandomLinefromTextAsset("weapons");
+        Weapon newWeapon = new Weapon();
+
+        string[] lines = weaponString.Split(',');
+        newWeapon.Name = lines[0];
+        newWeapon.Symbol = lines[1];
+        if (ColorUtility.TryParseHtmlString(lines[2], out Color c))
+        {
+            newWeapon.Color = c;
+        }
+        else
+        {
+            newWeapon.Color = Color.black;
+        }        
+        
+        newWeapon.DamageDice = lines[3];
+        newWeapon.Weight = System.Int32.Parse(lines[4]);
+
+        //magical bonus?
+        int roll = Dice.Roll("d100");
+        if (roll < 5 ) {
+            newWeapon.Name += $" +{roll}";
+            newWeapon.DamageDice += $"+{roll}";
+        }
+
+        return newWeapon;
     }
 
     public void RevealAll() {

@@ -15,10 +15,9 @@ public abstract class Entity
     public bool isPassable = false;
     public bool isCarryable = false;
 
-
     protected Action<Entity> cbEntityChanged;
 
-    public Tile Tile { get => tile; protected set => tile = value;} 
+    public Tile Tile { get => tile;  set => tile = value;} 
     public string Symbol { get => symbol; set => symbol = value; }
     public Color Color { get => color; set => color = value; }
     public Map Map { get => map; set => map = value; }
@@ -50,7 +49,7 @@ public abstract class Entity
             Tile.Exit(this);
         } else {
             // or else this is a new entity, add it to the map's list of entities
-            Map.AddEntity(this);
+            tile.Map.AddEntity(this);
         }
         // now set the tile, enter the tile, set visibility, etc
         Tile = tile;
@@ -73,6 +72,7 @@ public abstract class Entity
     public virtual void DropItem(Item i)
     {
         // note this doesn't remove from inventory, it just puts the item next to or under the dropper
+        i.CarriedBy = null;
         i.PlaceAtTile(Tile.GetRandomAdjacentEmptyTile());
     }
 

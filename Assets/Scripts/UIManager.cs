@@ -14,6 +14,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI turnsField = null;
     [SerializeField] private TextMeshProUGUI goldField = null;
 
+    [SerializeField] private TextMeshProUGUI charLevelField = null;
+    [SerializeField] private TextMeshProUGUI XPField = null;
+
     [SerializeField] private TextMeshProUGUI strField = null;
     [SerializeField] private TextMeshProUGUI agiField = null;
     [SerializeField] private TextMeshProUGUI armorField = null;
@@ -60,14 +63,16 @@ public class UIManager : MonoBehaviour
         }
         statusField.text = statusesList;
         goldField.text = $"{game.Player.gold}";
-        DLevelField.text = $"Dungeon Level: {game.DungeonLevel}";
+        charLevelField.text = $"{game.Player.charLevel}";
+        XPField.text = $"{game.Player.XP}";
+        DLevelField.text = $"Dungeon Depth: {game.DungeonLevel * 50}'";
         turnsField.text = $"Turns: {game.TurnCount}";
         strField.text = $"{game.Player.strength}";
         agiField.text = $"{game.Player.agility}";
         armorField.text = $"{game.Player.armor}";
         dodgeField.text = $"{game.Player.EvadeChance()*100}%"; 
         
-        if (game.Player.myWeapon != null) weaponField.text = $"{game.Player.myWeapon.Name} ({game.Player.myWeapon.DamageDice})";
+        if (game.Player.myWeapon != null) weaponField.text = $"{game.Player.myWeapon.Name}\n({game.Player.myWeapon.DamageDice})";
 
         UpdateInventory(game.Player);
 

@@ -7,6 +7,8 @@ public class Player:Actor
 {
 
     public FOVHelper fovHelper = new FOVHelper();
+    public int XP = 0;
+    public int charLevel = 1;
 
     public Player(Tile startingTile) // init by Tile
     {
@@ -21,9 +23,10 @@ public class Player:Actor
         Symbol = "@";
         Color = Color.black;
         // fovHelper.FOV(Tile);
-        myWeapon = new Weapon(Map, "1d6");
-        myWeapon.Initialize("Bare Hands", ".",Color.white);
+        myWeapon = new Weapon();
+        myWeapon.Initialize("Bare Hands", ".",Color.white, "1d3",2);
         myWeapon.isCarryable = false;
+        INVENTORY_LIMIT = 16;
     }
 
     public void AttemptMove(int x, int y) {
@@ -41,15 +44,18 @@ public class Player:Actor
     
     }
 
-    void Move(Tile targetTile) {
+    public void Move(Tile targetTile) {
 
         PlaceAtTile(targetTile);
 
         fovHelper.FOV(Tile);
         if (targetTile.GetItemOnTile() != null) {
             Item i = targetTile.GetItemOnTile();
-            Map.Game.Log($"You see a {i.Name} here.");
-            //i.ActivateItem(this);
+            if (i.AutoActivate) {
+                i.ActivateItem(this);
+            } else {
+            Map.Game.Log($"You see a {i.Name} here. (Press 'g' to pick up)");
+            }
         }
         Map.Game.AdvanceTurn();
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
@@ -82,5 +88,23 @@ public class Player:Actor
     public void UseItem(Item i) {
         i.ActivateItem(this);
         Map.Game.AdvanceTurn();
+    }
+
+    public void GainXP(int xp) {
+        XP += xp;
+        if (Mathf.FloorToInt(XP/100) >= charLevel ) {
+            AdvanceLevel(Mathf.FloorToInt(XP / 100)+1);
+        }
+    }
+
+    void AdvanceLevel(int level) {
+        charLevel = level;
+        Map.Game.Log($"<#448622>You are now level {charLevel}!</color>");
+        // present some advancement options
+        // temp, increase some stats:
+        health.MaxHitpoints += 10;
+        strength +=5;
+        agility +=5;
+        health.Hitpoints = health.MaxHitpoints;
     }
 }

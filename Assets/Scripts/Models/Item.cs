@@ -7,16 +7,18 @@ public class Item : Entity
 {
     
     public delegate void ItemEffectFunction(Actor target, Item self);
-    ItemEffectFunction myEffectFunction;
+    public ItemEffectFunction myEffectFunction;
+
     Actor carriedBy = null;
     public Actor CarriedBy { get => carriedBy; set => carriedBy = value; }
 
+    bool autoActivate = false; // set true for items that should activate when stepped on, like gold (or traps?)
+    public bool AutoActivate {get => autoActivate; set => autoActivate = value; }
 
 
-    public Item(Map map) {
-        Map = map;
+    public Item() {
         isCarryable = true;
-
+        isPassable = true;
     }
 
     // convenience constuctor, should store this data in a text file or something
@@ -36,13 +38,13 @@ public class Item : Entity
     }
 
 
-    public void Initialize(string name, string symbol, Color color,  ItemEffectFunction itemEffectFunction=null)
+    public void Initialize(string name, string symbol, Color color, ItemEffectFunction itemEffectFunction=null, bool autoActivate = false)
     {
         Symbol = symbol;
         Color = color;
         Name = name;
-        isPassable = true;
         myEffectFunction = itemEffectFunction;
+        AutoActivate = autoActivate;
     }
 
     // PlaceAtTile() is defined in Entity.cs
