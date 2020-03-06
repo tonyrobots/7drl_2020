@@ -44,6 +44,11 @@ public abstract class Entity
 
     public void PlaceAtTile(Tile tile)
     {
+        // if it's the player, let's do an FOV refresh
+        if (this.GetType() == typeof(Player)) {
+            Map.Game.Player.fovHelper.FOV(tile);
+        }
+
         // if we are moving from a previous tile, exit that one
         if (Tile != null) {
             Tile.Exit(this);

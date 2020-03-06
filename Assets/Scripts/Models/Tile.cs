@@ -96,10 +96,10 @@ public class Tile
     public Item GetItemOnTile() {
         foreach (Entity e in entities)
         {
-            if (e.isCarryable)  // only works for carryable items. which is all of them, for now, but...
-            {
+            // if (e.isCarryable)  // only works for carryable items. which is all of them, for now, but...
+            // {
                 return e as Item; // this seems like some funky hoodoo
-            }
+            // }
         }
         return null;
     }

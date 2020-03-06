@@ -25,6 +25,9 @@ public class Monster : Actor
 
         if (isAlive) {
 
+        // replace this something that iterates through all registered "tick" objects (or the other way 'round, somehow)
+        health.Tick();
+
         // replace this with some actual "AI" soon:
             if (alertCountdown > 0) {
                 MoveTowardPlayer();
@@ -32,8 +35,7 @@ public class Monster : Actor
                 MoveRandomly();
             }
 
-            // replace this something that iterates through all registered "tick" objects (or the other way 'round, somehow)
-            health.Tick();
+
         }
 
         // if you can see its tile, you can see the monster
@@ -105,11 +107,7 @@ public class Monster : Actor
 
     public void DropGold() {
         if (gold > 0) {
-            // Item newGold = new Item(Tile, "$", new Color(.3f,.3f,0f), gold +" gold", (actor, item) => { ItemEffects.Gold(actor, item, gold); });
-            Item newGold = new Item();
-            newGold.Initialize($"{gold} gold", "$", new Color(.3f, .3f, 0f), (actor, item) => { ItemEffects.Gold(actor, item, gold); }, true);
-            DropItem(newGold);
-            Debug.Log("dropping gold " + gold);
+            DropItem(Item.GenerateGold(gold));
         }
     }
 

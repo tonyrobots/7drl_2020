@@ -202,7 +202,7 @@ public class WorldController : MonoBehaviour
         go.transform.position = new Vector3(e.Tile.X, e.Tile.Y, 0);
         TextMeshPro tmp = go.AddComponent<TextMeshPro>();
         tmp.text = e.Symbol.ToString();
-        tmp.fontSize = 9;
+        // tmp.fontSize = 9;
         tmp.color = e.Color;
         tmp.alignment = TextAlignmentOptions.Center;
         go.GetComponent<RectTransform>().sizeDelta = new Vector2(1, 1);

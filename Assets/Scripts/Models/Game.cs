@@ -7,6 +7,7 @@ public class Game
 {
     int turnCount = 0;
     int dungeonLevel = 1;
+    int messageLogLimit = 8;
 
     WorldController wc;
 
@@ -45,12 +46,14 @@ public class Game
         combat = new CombatSystem(this);
 
         currentMap = GenerateMap();
-        player = new Player(currentMap.GetAppropriateStartingTile());
-
-
 
         // this is (should be) the ONLY reference to a unity object within the models layer
         wc = Object.FindObjectOfType<WorldController>();
+        
+        player = new Player(currentMap.GetAppropriateStartingTile());
+        if (wc.useAscii) {
+            player.Color = Color.white;
+        }
         
     }
 
@@ -60,7 +63,6 @@ public class Game
         //WC ProcessEntitiesQueue();
 
         TurnCount++;
-        Player.Tick(TurnCount);
 
         // WC uiManager.UpdatePlayerStats(game);
 
@@ -78,15 +80,16 @@ public class Game
         }
         // wC uiManager.UpdatePlayerStats(game);
         wc.FinalizeTurn();
+        Player.Tick(TurnCount);
         gamestate = Game.GameStates.PLAYER_TURN;
         // WC uiManager.UpdateMessageLog(game);
     }
 
     public void DoEntityTurns()
     {
-        foreach (Entity e in currentMap.Entities)
+        for (int i = 0; i < currentMap.Entities.Count; i++)
         {
-            e.DoTurn();
+            currentMap.Entities[i].DoTurn();
         }
     }
 
@@ -106,14 +109,19 @@ public class Game
     }
 
     public void Log(string simpleMessage) {
-        //Debug.Log(simpleMessage);
         Message m = new Message(simpleMessage);
         messageLog.Enqueue(m);
+        Debug.Log(m.messageText);
+
+        if (messageLog.Count > messageLogLimit) {
+            messageLog.Dequeue();
+        }
     }
 
     public void GameOver()
     {   
         Log("Game is over. Hit space to restart.");
+        wc.FinalizeTurn();
 
     }
 
@@ -140,6 +148,9 @@ public class Game
 
         wc.GenerateMapGameObjects(currentMap);
 
+        // Set level number
+        dungeonLevel = newLevel;
+
         // place player
         player.Map = currentMap;
         player.Move(currentMap.GetAppropriateStartingTile());
@@ -155,12 +166,12 @@ public class Game
         Map newMap;
 
         // big map
-        // newMap = new Map(60,40, game); 
-        // newMap.GenerateRooms(10,10,25,4,3);
+        newMap = new Map(width:50, height:25, this);
+        newMap.GenerateRooms(maxWidth:12, maxHeight:12, maxRooms:18, minWidth:5, minHeight:3);
 
         // small map
-        newMap = new Map(25, 15, this);
-        newMap.GenerateRooms(10, 10, 3, 3, 3);
+        // newMap = new Map(width:25, height:15, this);
+        // newMap.GenerateRooms(maxWidth:10, maxHeight:10, maxRooms:3, minWidth:3, minHeight:3);
 
         return newMap;
 

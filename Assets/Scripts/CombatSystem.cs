@@ -13,6 +13,9 @@ public class CombatSystem
 
     public void Attack(Actor attacker, Actor target) {
 
+        // is the target still alive?
+        if (!target.isAlive) return;
+
         // is the attack evaded?
             if (Evaded(attacker, target)) {
                 game.Log($"{target.Name} nimbly evades the attack of {attacker.Name}");
@@ -26,7 +29,6 @@ public class CombatSystem
         bool crit = (Random.Range(1, 101) < attacker.agility/2);
         if (crit) msg += "<#ff2222>critically</color> ";
         // determine the damage
-        // TODO incororate weapons, at least for the player:
         int weaponDamage =0;
         if (attacker == game.Player) {
             weaponDamage += Dice.Roll(attacker.myWeapon.DamageDice);
@@ -39,16 +41,23 @@ public class CombatSystem
         }
 
         if (crit) damage *= 2;
-        //msg += $"for {damage} damage.";
+        msg += $"for {damage} damage.";
         game.Log(msg);
         // apply the damage
         target.health.TakeDamage(damage);
+
+        // if the weapon has any special effects, do them now
+        if (attacker.myWeapon != null) attacker.myWeapon.ActivateItem(target);
+
         if (target.isAlive == false && attacker== game.Player) {
             game.Player.GainXP(target.XPvalue());
         }
     }
 
     public bool Evaded(Actor attacker, Actor target) {
-        return (Random.Range(1,101) < target.agility); // need to make this not just a straight agility check, include armor weight?
+        // lighter weapons are harder to evade
+        int evasionChance = target.agility;
+        if (attacker.myWeapon != null) evasionChance += (2*attacker.myWeapon.Weight);
+        return (Random.Range(1,101) < evasionChance); 
     }
 }

@@ -12,7 +12,7 @@ public abstract class Actor : Entity
     public int agility = 10;
     public int armor = 0;
     public int gold = 0;
-    public int level = 1;
+    public int charLevel = 1;
 
     public Weapon myWeapon;
 
@@ -42,10 +42,11 @@ public abstract class Actor : Entity
         Item i = Tile.GetItemOnTile();
         if (i != null)
         {
-            Map.Game.Log($"{Name} picks up a {i.Name}");
 
-            AddToInventory(i);  
-            i.RemoveFromMap();
+            if (AddToInventory(i)) 
+            {
+                i.RemoveFromMap();
+            }
             if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
             if (this.GetType() == typeof(Player)) // if it's a player doing the picking up, that's the end of the turn
@@ -66,6 +67,7 @@ public abstract class Actor : Entity
             i.CarriedBy = this;
             return true;
         } else if (inventory.Count < INVENTORY_LIMIT) {
+            Map.Game.Log($"{Name} picks up a {i.Name}");
             Inventory.Add(i);
             i.CarriedBy = this;
             return true;
@@ -82,9 +84,12 @@ public abstract class Actor : Entity
         }
     }
 
-    public virtual void Die() {
-        Map.Game.Log($"{Name} dies, theoretically.");
-        if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
+    public virtual void Die() { 
+        if (isAlive) // can't die if you're already dead!
+        {    
+            Map.Game.Log($"{Name} dies, theoretically.");
+            if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
+        }        
     }
 
     public virtual float EvadeChance() {

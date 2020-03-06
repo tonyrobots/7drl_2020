@@ -15,23 +15,42 @@ public class Item : Entity
     bool autoActivate = false; // set true for items that should activate when stepped on, like gold (or traps?)
     public bool AutoActivate {get => autoActivate; set => autoActivate = value; }
 
+    public int numberOfUses = 1;
+    public bool isConsumable = false;
 
     public Item() {
         isCarryable = true;
         isPassable = true;
     }
 
-    // convenience constuctor, should store this data in a text file or something
-    public Item(Map map, string type)  {
-        Map = map;
+    // convenience constuctor....This is pretty dumb, should just use little classes or something...or at least an enum of item types
+    public Item(string type)  {
         isCarryable = true;
-
+        isPassable = true;
 
         switch (type)
         {
             case "healing potion":
-                Initialize("healing potion", "!", Color.blue, (actor, item) => { ItemEffects.HealingPotion(actor, item, 10); });
+                Initialize("Healing Potion", "!", Color.blue, (actor, item) => { ItemEffects.HealingPotion(actor, item, 10); });
+                isConsumable = true;
                 break;
+
+            case "down stairs":
+                Initialize("Stairs Down", ">", Color.black, (actor, item) => { ItemEffects.DescendLevel(actor, item, 0); });
+                isCarryable=false;
+                autoActivate=true;
+                break;
+
+            case "scroll of mapping":
+                Initialize("Scroll of Magic Map", "?", Color.cyan, (actor, item) => { ItemEffects.RevealMap(actor, item, 0); });
+                isConsumable = true;
+                break;
+            
+            case "scroll of teleportation":
+                Initialize("Scroll of Teleportation", "?", Color.magenta, (actor, item) => { ItemEffects.Teleport(actor, item, 0); });
+                isConsumable = true;
+                break;
+
             default:
                 break;
         }
@@ -57,20 +76,40 @@ public class Item : Entity
 
     public void ActivateItem(Actor target){
         if (myEffectFunction != null) {
-            Debug.Log($"activating {this.Name} ");
-            myEffectFunction(target, this);
-        }
+            if (!isConsumable || numberOfUses > 0) {
+                myEffectFunction(target, this);
+                if (isConsumable) {
+                    numberOfUses--;
+                    if (numberOfUses == 0) this.Consume();
+                }
+            }
+        } 
     }
+
+    // public void ActivateItem(Actor target){
+    //     if (myEffectFunction != null) {
+    //         myEffectFunction(target, this);
+    //     } 
+    // }
 
     public void Consume() {
         Debug.Log($"consuming {Name}");
         this.RemoveFromMap();
         if (CarriedBy != null) CarriedBy.RemoveFromInventory(this);
         Name += " (consumed)";
+        // kill gameobject somehow?
         OnEntityChangedCallbacks();
     }
 
     public void OnEntityChangedCallbacks() {
         if (cbEntityChanged != null) cbEntityChanged(this);
+    }
+
+    public static Item GenerateGold(int amount) {
+        Item newGold = new Item();
+        newGold.Initialize($"{amount} gold", "$", new Color(.3f, .3f, 0f), (actor, item) => { ItemEffects.Gold(actor, item, amount); }, true);
+        newGold.isConsumable=true;
+        newGold.numberOfUses=1;
+        return newGold;
     }
 }

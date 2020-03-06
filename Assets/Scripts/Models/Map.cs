@@ -91,29 +91,31 @@ public class Map
             // Temp: add a monster to the middle of the room, except for first room
             // if (i>0) {
             //     AddMonster( new Monster(GetTile(newRoom.Center().x, newRoom.Center().y),"M", Color.green, "scary monster") );
-            //     PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomFloorTile());
+            PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomEmptyFloorTile());
             // }
 
 
         }
         GenerateHalls();
 
-        // Temp: add some healing potions randomly around
-        for (int j = 0; j < Random.Range(2, 5); j++)
+        // Temp: add some loot randomly around
+        for (int j = 0; j < Random.Range(3, 7); j++)
         {
             // Item newItem = new Item(GetRandomFloorTile(), "!", Color.blue, "healing potion", (actor, item) => { ItemEffects.HealingPotion(actor, item, 10);});
-            Item newItem = new Item();
-            newItem.Initialize("healing potion", "!", Color.blue, (actor, item) => { ItemEffects.HealingPotion(actor, item, 10); });
+            // Item newItem = new Item();
+            // newItem.Initialize("healing potion", "!", Color.blue, (actor, item) => { ItemEffects.HealingPotion(actor, item, 10); });
+            Item newItem = GenerateLoot(game.Level);
             newItem.PlaceAtTile(GetRandomEmptyFloorTile());
         }
 
-        // and  couple  monsters for good measure:
-        for (int m = 0; m < 1; m++)
+        // and  couple more  monsters for good measure:
+        for (int m = 0; m < Random.Range(0,6); m++)
         {
             PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomEmptyFloorTile());
         }
         Weapon w = GenerateWeapon();
         w.PlaceAtTile(GetRandomEmptyFloorTile());
+        GenerateAndPlaceStairsDown();
     }
 
 
@@ -123,7 +125,7 @@ public class Map
         
     }
 
-    Tile GetRandomEmptyFloorTile() {
+    public Tile GetRandomEmptyFloorTile() {
         while (true){
             Tile t = floorTiles[Random.Range(0, floorTiles.Count)];
             if (t.entities.Count == 0) return t;
@@ -155,7 +157,7 @@ public class Map
     public void PlaceRandomMonsterForLevel(int level, Tile tile)
     {
         // get csv line of monster data
-        string monsterString = Helpers.TextAssetHelper.GetRandomLinefromTextAsset("monsters",skipFirstLine:true).Trim();
+        string monsterString = Helpers.TextAssetHelper.GetRandomLinefromTextAsset("monsters");
         // separate it out into fields and assign them
         Monster newMonster = new Monster(this);
 
@@ -180,7 +182,7 @@ public class Map
         newMonster.agility = System.Int32.Parse(lines[5]);
         newMonster.gold = System.Int32.Parse(lines[6]);
         newMonster.health = new Health(System.Int32.Parse(lines[7]), newMonster);
-        newMonster.level = System.Int32.Parse(lines[8]);
+        newMonster.charLevel = System.Int32.Parse(lines[8]);
         newMonster.PlaceAtTile(tile);
     }
 
@@ -202,6 +204,11 @@ public class Map
         
         newWeapon.DamageDice = lines[3];
         newWeapon.Weight = System.Int32.Parse(lines[4]);
+
+        if (Dice.Roll("d100") < 5) {
+            newWeapon.Name += " of sharpness";
+            newWeapon.myEffectFunction = (actor, item) => { ItemEffects.Bleeder(actor, item, 5); };
+        }
 
         //magical bonus?
         int roll = Dice.Roll("d100");
@@ -235,6 +242,42 @@ public class Map
             Tile endTile = GetTile(nextRoom.Center().x, nextRoom.Center().y);
             DigTunnel(startTile, endTile);
         }
+    }
+
+    public Item GenerateLoot(int level=1){
+        string[] lootTypes = {"weapon","gold","item"}; // should use enum here
+        string myLootType = lootTypes[Random.Range(0,lootTypes.Length )];
+        Item lootItem = null;
+        switch (myLootType)
+        {
+            case "weapon":
+                lootItem = GenerateWeapon(level);
+            break;
+
+            case "gold":
+                int gold = Random.Range(1,level*25);
+                lootItem = Item.GenerateGold(gold);
+            break;
+
+            case "item":
+                // hardcode for now, fix later!
+                string[] itemTypes = { "healing potion", "scroll of mapping", "scroll of teleportation" }; // should use enum here
+                string myItemType = itemTypes[Random.Range(0, itemTypes.Length)];
+                lootItem = new Item(myItemType);
+            break;
+            
+            default:
+                Debug.LogError("generate loot fell through to default, something is wrong.");
+            break;
+        }         
+
+        return lootItem;
+    }
+
+    void GenerateAndPlaceStairsDown()
+    {
+        Item newStairs = new Item("down stairs");
+        newStairs.PlaceAtTile(GetRandomEmptyFloorTile());
     }
 
     void DigTunnel(Tile startTile, Tile endTile) {

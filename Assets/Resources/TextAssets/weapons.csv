@@ -1,19 +1,19 @@
 NAME,SYMBOL,COLOR," DAMAGE DICE"," WEIGHT"
-Dagger,|,#DDAAAA,1d4+1,1
-Stiletto,|,#DDAAAA,1d4,1
-Mace,@,#DDAAAA,1d6+2,2
-Flail,@,#DDAAAA,2d4+1,2
-Whip,@,#DDAAAA,1d4+1,1
-Club,',#DDAAAA,1d6,2
-Pike,},#DDAAAA,2d6,4
-Cat O' Nine Tails,@,#DDAAAA,3d4,3
-Scimitar,/,#DDAAAA,1d8+1,3
-Long Sword,/,#DDAAAA,1d10,3
-Short Sword,/,#DDAAAA,2d4+1,2
-Bastard Sword,/,#DDAAAA,2d8,4
-Great Sword,/,#DDAAAA,4d6,5
-Axe,],#DDAAAA,1d12,3
-Battle Axe,],#DDAAAA,3d8,4
-Trident,|,#DDAAAA,3d4,3
-Cleaver,},#DDAAAA,1d4+2,2
-Hand Axe,],#DDAAAA,2d4,2
+Dagger,|,#626c6e,1d4+1,1
+Stiletto,|,#626c6e,1d4,1
+Mace,\,#626c6e,1d6+2,2
+Flail,\,#626c6e,2d4+1,2
+Whip,\,#626c6e,1d4+1,1
+Club,\,#626c6e,1d6,2
+Pike,/,#626c6e,2d6,4
+Cat O' Nine Tails,@,#626c6e,3d4,3
+Scimitar,|,#626c6e,1d8+1,3
+Long Sword,|,#626c6e,1d10,3
+Short Sword,|,#626c6e,2d4+1,2
+Bastard Sword,|,#626c6e,2d8,4
+Great Sword,|,#626c6e,4d6,5
+Axe,\,#626c6e,1d12,3
+Battle Axe,\,#626c6e,3d8,4
+Trident,/,#626c6e,3d4,3
+Cleaver,|,#626c6e,1d4+2,2
+Hand Axe,\,#626c6e,2d4,2

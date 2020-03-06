@@ -8,7 +8,6 @@ public class Player:Actor
 
     public FOVHelper fovHelper = new FOVHelper();
     public int XP = 0;
-    public int charLevel = 1;
 
     public Player(Tile startingTile) // init by Tile
     {
@@ -26,7 +25,7 @@ public class Player:Actor
         myWeapon = new Weapon();
         myWeapon.Initialize("Bare Hands", ".",Color.white, "1d3",2);
         myWeapon.isCarryable = false;
-        INVENTORY_LIMIT = 16;
+        INVENTORY_LIMIT = 12;
     }
 
     public void AttemptMove(int x, int y) {
@@ -67,16 +66,17 @@ public class Player:Actor
         health.Tick();
     }
 
-
     public override void Die() {
-        Map.Game.Log($"{Name} dies unceremoniously.");
-        Symbol = "%";
-        Color = new Color(.4f, .2f, .2f);
-        isAlive = false;
-        Map.Game.gamestate = Game.GameStates.PLAYER_DEAD;
-        Map.Game.GameOver();
-        if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
-
+        if (isAlive) // can't die if you're already dead!
+        {
+            Map.Game.Log($"{Name} dies unceremoniously."); 
+            Symbol = "%";
+            Color = new Color(.4f, .2f, .2f);
+            isAlive = false;
+            if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
+            Map.Game.gamestate = Game.GameStates.PLAYER_DEAD;
+            Map.Game.GameOver();
+        }
     }
 
     public override void DropItem(Item i) {
@@ -92,13 +92,19 @@ public class Player:Actor
 
     public void GainXP(int xp) {
         XP += xp;
-        if (Mathf.FloorToInt(XP/100) >= charLevel ) {
-            AdvanceLevel(Mathf.FloorToInt(XP / 100)+1);
+
+        // gained a level?
+        while (XP >= XPNeededForNextLevel()) {
+            AdvanceLevel(charLevel+1);
         }
     }
 
-    void AdvanceLevel(int level) {
-        charLevel = level;
+    public int XPNeededForNextLevel() {
+        return 50 * charLevel * (1 + charLevel);
+    }
+
+    void AdvanceLevel(int newLevel) {
+        charLevel = newLevel;
         Map.Game.Log($"<#448622>You are now level {charLevel}!</color>");
         // present some advancement options
         // temp, increase some stats:

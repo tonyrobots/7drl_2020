@@ -9,6 +9,8 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI nameField = null;
     [SerializeField] private TextMeshProUGUI healthField = null;
+    [SerializeField] private Transform healthBar = null;
+
     [SerializeField] private TextMeshProUGUI statusField = null;
     [SerializeField] private TextMeshProUGUI DLevelField = null;
     [SerializeField] private TextMeshProUGUI turnsField = null;
@@ -16,6 +18,8 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI charLevelField = null;
     [SerializeField] private TextMeshProUGUI XPField = null;
+    [SerializeField] private Transform XPBar = null;
+
 
     [SerializeField] private TextMeshProUGUI strField = null;
     [SerializeField] private TextMeshProUGUI agiField = null;
@@ -38,12 +42,7 @@ public class UIManager : MonoBehaviour
 
     public void Start() {
         
-
     }
-
-    // public void InitializeUIManager(Game game){
-    //     game.Player.RegisterEntityChangedCallback((entity) => { UpdatePlayerStats(entity.Map.Game); });
-    // }
 
 
     public void UpdatePlayerStats(Game game)
@@ -57,14 +56,18 @@ public class UIManager : MonoBehaviour
             healthField.text = "<#ff0000>Dead.</color>";
         }
 
-        string statusesList = $"{game.gamestate}";
+        healthBar.localScale = new Vector3(((float)game.Player.health.Hitpoints/game.Player.health.MaxHitpoints),1f,1f);
+
+        string statusesList = "";
         foreach (string status in game.Player.statuses) {
             statusesList += $"{status}     ";
         }
         statusField.text = statusesList;
         goldField.text = $"{game.Player.gold}";
         charLevelField.text = $"{game.Player.charLevel}";
-        XPField.text = $"{game.Player.XP}";
+        XPField.text = $"{game.Player.XP}/{game.Player.XPNeededForNextLevel()}";
+        XPBar.localScale = new Vector3(((float)game.Player.XP / game.Player.XPNeededForNextLevel()), 1f, 1f);
+
         DLevelField.text = $"Dungeon Depth: {game.DungeonLevel * 50}'";
         turnsField.text = $"Turns: {game.TurnCount}";
         strField.text = $"{game.Player.strength}";
@@ -121,11 +124,20 @@ public class UIManager : MonoBehaviour
         while (game.messageLog.Count > 0)
         {   
             Message m = game.messageLog.Dequeue();
-            messageToShow += $"<{m.hexColor}>{m.messageText}</color>... ";
+            messageToShow += $"<{m.hexColor}>{m.messageText}</color> ";
         }
 
 
         messagesField.text = messageToShow;
     }
 
+    // public void UpdateMessageLog(Game game) {
+    //     string messageToShow = "";
+    //     foreach (Message m in game.messageLog)
+    //     {   
+    //         messageToShow += $"<{m.hexColor}>{m.messageText}</color>. ";
+    //     }
+    //     messagesField.text = messageToShow;
+
+    // }
 }

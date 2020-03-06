@@ -7,13 +7,13 @@ namespace Helpers
 {
     public static class TextAssetHelper {
 
-        public static string GetRandomLinefromTextAsset(string taName, bool skipFirstLine=false)
+        public static string GetRandomLinefromTextAsset(string taName, bool skipFirstLine=true)
         {
             TextAsset ta = (TextAsset)Resources.Load("TextAssets/" + taName, typeof(TextAsset));
             return GetRandomLineFromTextAsset(ta, skipFirstLine);
         }
 
-        static string GetRandomLineFromTextAsset(TextAsset ta, bool skipFirstLine=false) {
+        static string GetRandomLineFromTextAsset(TextAsset ta, bool skipFirstLine=true) {
             if (ta == null) {
                 Debug.LogError($"Tried to read from textasset {ta} but failed");
                 return "";
