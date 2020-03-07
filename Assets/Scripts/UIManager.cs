@@ -35,8 +35,14 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI messagesField = null;
 
-    // [SerializeField] private Text goldField;
-    // [SerializeField] private Text mapLevelField;
+
+    // Decision UI
+    [SerializeField] private Transform decisionPanel = null;
+    [SerializeField] private TextMeshProUGUI decisionHeader = null;
+
+
+
+    Game game;
 
     public bool InventoryIsOpen;
 
@@ -44,9 +50,15 @@ public class UIManager : MonoBehaviour
         
     }
 
+    public void UpdateAll() {
+        UpdatePlayerStats(game);
+        UpdateInventory(game.Player);
+        UpdateMessageLog(game);
+    }
 
     public void UpdatePlayerStats(Game game)
     {
+        this.game = game;
 
         nameField.text = game.Player.Name;
 
@@ -129,6 +141,30 @@ public class UIManager : MonoBehaviour
 
 
         messagesField.text = messageToShow;
+    }
+
+    public void ShowDecisionPanel(Player player, List<UpgradeOption> options, string headerText)
+    {
+        UpdateInventory(player);
+        decisionPanel.localScale = new Vector3(1, 1, 1);
+        decisionHeader.text = headerText; ;
+        for (int i = 0; i < options.Count; i++)
+        {
+            //only works with 3 options!
+            Button optionButton = decisionPanel.GetComponentsInChildren<Button>()[i];
+            optionButton.GetComponentsInChildren<TextMeshProUGUI>()[0].text =  options[i].Name + Environment.NewLine + options[i].Description;
+        }
+    }
+
+    public void ChooseOption(int n) {
+        game.ChooseOption(n);
+        UpdateAll();
+    }
+
+    public void HideDecisionPanel() // don't call this directly, go through the method in Game
+    {
+        decisionPanel.localScale = new Vector3(0, 0, 0);
+        Debug.Log("closing decision panel");
     }
 
     // public void UpdateMessageLog(Game game) {

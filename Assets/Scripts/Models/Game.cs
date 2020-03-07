@@ -9,7 +9,7 @@ public class Game
     int dungeonLevel = 1;
     int messageLogLimit = 8;
 
-    WorldController wc;
+    public WorldController wc;
 
     public enum GameStates
     {
@@ -18,7 +18,8 @@ public class Game
         PLAYER_DEAD,
         EXPLORE_MAP,
         INVENTORY_USE,
-        INVENTORY_DROP
+        INVENTORY_DROP,
+        UPGRADE_MENU
     }
 
     public GameStates gamestate = GameStates.PLAYER_TURN;
@@ -31,6 +32,7 @@ public class Game
 
     public Queue<Message> messageLog;
     public Queue<Entity> entitiesToRender;
+    List<UpgradeOption> currentlyOfferedOptions = null;
 
     public Map CurrentMap { get => currentMap; set => currentMap = value; }
     public int TurnCount { get => turnCount; set => turnCount = value; }
@@ -75,13 +77,13 @@ public class Game
         }
         if (gamestate == Game.GameStates.PLAYER_DEAD)
         {
-            GameOver();
             return;
         }
         // wC uiManager.UpdatePlayerStats(game);
         wc.FinalizeTurn();
         Player.Tick(TurnCount);
         gamestate = Game.GameStates.PLAYER_TURN;
+        Player.ProcessUpgrades();
         // WC uiManager.UpdateMessageLog(game);
     }
 
@@ -106,6 +108,27 @@ public class Game
         wc.uiManager.HideInventory();
         gamestate = GameStates.PLAYER_TURN;
 
+    }
+
+    public void PresentUpgradeOptions(List<UpgradeOption> options, string headerText = "Choose one of the following:") {
+        currentlyOfferedOptions = options;
+        ClosePlayerInventory();
+        gamestate = GameStates.UPGRADE_MENU;
+        wc.uiManager.ShowDecisionPanel(player, options, headerText);
+    }
+
+    public void CloseOptionsPanel() {
+        wc.uiManager.HideDecisionPanel();
+        gamestate = GameStates.PLAYER_TURN;
+    }
+
+    public void ChooseOption(int n) {
+        Debug.Log($"you chose option {n+1}");
+        if (currentlyOfferedOptions != null) {
+            currentlyOfferedOptions[n].MyOptionEffect();
+            CloseOptionsPanel();
+        }
+        currentlyOfferedOptions = null;
     }
 
     public void Log(string simpleMessage) {

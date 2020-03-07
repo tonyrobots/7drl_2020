@@ -164,8 +164,17 @@ public class Map
         if (monsterString == "")
         {
             Debug.LogError("Got a blank line from the monster csv...no monster for you!");
+            return;
         }
         string[] lines = monsterString.Split(',');
+        newMonster.charLevel = System.Int32.Parse(lines[8]);
+
+        if (newMonster.charLevel > level) { // this is SLOPPY
+            PlaceRandomMonsterForLevel(level, tile);
+            return;
+        } 
+
+
         newMonster.Name = lines[0];
         newMonster.Symbol = lines[1];
         Color c;
@@ -182,7 +191,7 @@ public class Map
         newMonster.agility = System.Int32.Parse(lines[5]);
         newMonster.gold = System.Int32.Parse(lines[6]);
         newMonster.health = new Health(System.Int32.Parse(lines[7]), newMonster);
-        newMonster.charLevel = System.Int32.Parse(lines[8]);
+        newMonster.DamageDice = lines[9];
         newMonster.PlaceAtTile(tile);
     }
 
@@ -244,7 +253,7 @@ public class Map
         }
     }
 
-    public Item GenerateLoot(int level=1){
+    public Item GenerateLoot(int level=1, int goldMax=25){
         string[] lootTypes = {"weapon","gold","item"}; // should use enum here
         string myLootType = lootTypes[Random.Range(0,lootTypes.Length )];
         Item lootItem = null;
@@ -255,7 +264,7 @@ public class Map
             break;
 
             case "gold":
-                int gold = Random.Range(1,level*25);
+                int gold = Random.Range(5,goldMax);
                 lootItem = Item.GenerateGold(gold);
             break;
 

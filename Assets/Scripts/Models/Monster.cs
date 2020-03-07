@@ -9,6 +9,7 @@ public class Monster : Actor
     // if alert countdown > 0, monster is aware of player and moving toward them (not implemented)
     int alertCountdown = 0;
 
+
     public Monster(Map map) {
         Map=map;
     }
@@ -65,7 +66,7 @@ public class Monster : Actor
     public void MoveRandomly() {
         int random_x;
         int random_y;
-        if (UnityEngine.Random.Range(0,1) == 0) {
+        if (UnityEngine.Random.Range(0,2) == 0) {
              random_x = Random.Range(-1, 2);
              random_y =0;
         } else {
@@ -77,7 +78,7 @@ public class Monster : Actor
 
     public void MoveTowardPlayer() {
         Tile playerTile = Map.Game.Player.Tile;
-        if (Map.GetManhattanDistanceBetweenTiles(Tile, playerTile) == 1) {
+        if (Tile.IsAdjacentTo(playerTile)) {
             Map.Game.combat.Attack(this,Map.Game.Player);
         } else {
             MoveRandomly();
@@ -100,19 +101,29 @@ public class Monster : Actor
         isAlive = false;
         isPassable = true;
         Name += " corpse";
-        DropGold();
+        DropLoot(.5f); // drop loot 50% of the time
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
     }
 
-    public void DropGold() {
+    public void DropGold() { // not currently used
         if (gold > 0) {
             DropItem(Item.GenerateGold(gold));
         }
     }
 
+    public void DropLoot(float dropRate)
+    {
+        if (Random.Range(0,1) <= dropRate) {
+            DropItem(Map.GenerateLoot(charLevel, gold));
+        }
+    }
+
     public override int XPvalue() {
-        return (health.MaxHitpoints + strength + agility); //this is a terrible XP formula, TODO fix it!
+        float xp = health.MaxHitpoints + (strength+agility)/2f; // Hit points plus average of strength and agility
+        xp += armor*3; // plus 3x armor
+        xp *= Map.Game.Player.experienceModifier;
+        return Mathf.RoundToInt(xp); 
     }
 
 }

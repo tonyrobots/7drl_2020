@@ -13,6 +13,8 @@ public abstract class Actor : Entity
     public int armor = 0;
     public int gold = 0;
     public int charLevel = 1;
+    string damageDice;
+    public string DamageDice { get => damageDice; set => damageDice = value; }
 
     public Weapon myWeapon;
 
@@ -101,7 +103,10 @@ public abstract class Actor : Entity
         return 0;
     }
 
-    public void WieldWeapon(Weapon w) {
+    // Note: currently there's no way to unwield a weapon without wielding another one. 
+    // Will probably want to change that, and when I do, will have to deal with re-equiping 'bare hands'
+
+    public void WieldWeapon(Weapon w) { 
         if (myWeapon != null && myWeapon.isCarryable ) {
             // drop current weapon if it's carryable, which should be all weapons besides 'bare hands'
             DropItem(myWeapon);
@@ -109,6 +114,7 @@ public abstract class Actor : Entity
         }
         myWeapon = w;
         Map.Game.Log("You wield the " + myWeapon.Name); 
+        DamageDice = w.DamageDice;
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
     }

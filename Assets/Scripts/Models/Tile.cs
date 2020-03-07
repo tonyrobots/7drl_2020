@@ -104,6 +104,14 @@ public class Tile
         return null;
     }
 
+    public bool IsAdjacentTo(Tile otherTile) {
+        if (Map.Game.allowDiagonalMovement) {
+            return (Mathf.Abs(X-otherTile.X) <=1) && (Mathf.Abs(Y-otherTile.Y) <= 1);
+        
+        } else {
+            return (Map.GetManhattanDistanceBetweenTiles(this, otherTile) == 1);
+        }
+    }
 
 
     public List<Tile> GetAdjacentEmptyTiles() {

@@ -29,7 +29,6 @@ public class WorldController : MonoBehaviour
     void Start()
     {
         game = new Game();
-
         map = game.CurrentMap;
         player = game.Player;
 
@@ -46,6 +45,7 @@ public class WorldController : MonoBehaviour
         uiManager.UpdatePlayerStats(game);
         uiManager.UpdateMessageLog(game);
         uiManager.HideInventory();
+        uiManager.HideDecisionPanel();
 
         inputManager = gameObject.AddComponent<InputManager>();
         inputManager.Game = game;

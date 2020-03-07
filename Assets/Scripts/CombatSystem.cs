@@ -13,12 +13,12 @@ public class CombatSystem
 
     public void Attack(Actor attacker, Actor target) {
 
-        // is the target still alive?
-        if (!target.isAlive) return;
+        // are both participants target still alive?
+        if (!target.isAlive || !attacker.isAlive) return;
 
         // is the attack evaded?
             if (Evaded(attacker, target)) {
-                game.Log($"{target.Name} nimbly evades the attack of {attacker.Name}");
+                game.Log($"{target.Name} nimbly evades the attack of {attacker.Name}.");
                 return;
             }
 
@@ -26,17 +26,16 @@ public class CombatSystem
 
         string msg = $"{attacker.Name} hits {target.Name} ";
         // was it a critical hit?
-        bool crit = (Random.Range(1, 101) < attacker.agility/2);
+        bool crit = (Random.Range(1, 101) < attacker.agility/5);
         if (crit) msg += "<#ff2222>critically</color> ";
+
         // determine the damage
-        int weaponDamage =0;
-        if (attacker == game.Player) {
-            weaponDamage += Dice.Roll(attacker.myWeapon.DamageDice);
-        }
-        int damage = Mathf.CeilToInt(attacker.strength/5f) + weaponDamage - target.armor; 
+        int weaponDamage = Dice.Roll(attacker.DamageDice);
+
+        int damage = Mathf.CeilToInt(attacker.strength/9f) + weaponDamage - target.armor; 
 
         if (damage <= 0) {
-            game.Log ($"{target.Name}'s armor absorbs the force of {attacker.Name}'s blow");
+            game.Log ($"{target.Name}'s armor absorbs the force of {attacker.Name}'s blow.");
             return;
         }
 

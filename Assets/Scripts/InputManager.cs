@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
 public class InputManager : MonoBehaviour
 {
@@ -15,81 +16,6 @@ public class InputManager : MonoBehaviour
     {
         
     }
-
-    // // Update is called once per frame
-    // void Update()
-    // {
-    //     if (Game.Player.isAlive && Game.Player.Map.Game.gamestate == Game.GameStates.PLAYER_TURN)
-    //     {
-    //         // should use a separate input manager
-    //         if (Input.GetKeyDown(KeyCode.UpArrow))
-    //         {
-    //             Game.Player.AttemptMove(0, 1);
-    //         }
-    //         else if (Input.GetKeyDown(KeyCode.DownArrow))
-    //         {
-    //             Game.Player.AttemptMove(0, -1);
-    //         }
-    //         else if (Input.GetKeyDown(KeyCode.LeftArrow))
-    //         {
-    //             Game.Player.AttemptMove(-1, 0);
-    //         }
-    //         else if (Input.GetKeyDown(KeyCode.RightArrow))
-    //         {
-    //             Game.Player.AttemptMove(1, 0);
-    //         }
-    //         else if (Input.GetKeyDown(KeyCode.Space))
-    //         {
-    //             Game.Player.Wait();
-    //         }
-    //         else if (Input.GetKeyDown(KeyCode.G))
-    //         {
-    //             // get item
-    //             Game.Player.PickUpItemAtCurrentLocation();
-    //         }
-    //         else if (Input.GetKeyDown(KeyCode.I))
-    //         {
-    //             // show inventory
-    //             Debug.Log(Game.Player.ListInventoryAsString());
-    //             Game.Player.Map.Game.OpenPlayerInventory();
-    //         }
-    //         else if (Input.GetKeyDown(KeyCode.M))
-    //         // explore map mode
-    //         {
-    //             Game.Player.Map.Game.gamestate = Game.GameStates.EXPLORE_MAP;
-    //         }
-    //         else if (Input.GetKeyDown(KeyCode.KeypadMinus))
-    //         {
-    //             // reveal map (TODO disable later)
-    //             Game.Player.Map.RevealAll();
-
-    //         }
-
-    //     }
-    //     else if (Game.Player.isAlive == false)
-    //     {
-    //         // if player is dead, hitting space will restart the game completely
-    //         if (Input.GetKeyDown(KeyCode.Space))
-    //         {
-    //             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    //         }
-    //     }
-    //     else if (Game.Player.Map.Game.gamestate == Game.GameStates.EXPLORE_MAP)
-    //     {
-    //         // stub
-    //         if (Input.GetKeyDown(KeyCode.Escape))
-    //         {
-    //             Game.Player.Map.Game.gamestate = Game.GameStates.PLAYER_TURN;
-    //         }
-    //     }
-    //     else if (Game.Player.Map.Game.gamestate == Game.GameStates.INVENTORY)
-    //     {
-    //         if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Escape))
-    //         {
-    //             Game.Player.Map.Game.ClosePlayerInventory();
-    //         }
-    //     }
-    // }
 
     void Update() {
         switch (game.gamestate)
@@ -202,6 +128,23 @@ public class InputManager : MonoBehaviour
                 foreach (char c in Input.inputString) {
                     if (c >= 'a' && c <= 'z') {
                         ActOnItem(c);
+                    }
+                }
+            break;
+
+            case Game.GameStates.UPGRADE_MENU:
+                // if (Input.GetKeyDown(KeyCode.Escape))
+                // {
+                //     // hide panel. probably shouldn't allow this?
+                //     // Debug.Log(Game.Player.ListInventoryAsString());
+                //     Game.CloseOptionsPanel();
+                // }
+                foreach (char c in Input.inputString)
+                {
+                    if (c >= '1' && c <= '3')
+                    {
+                        //Game.ChooseOption(c - '1'); // returns 0 for "1", 1, for "2", and 2 for "3", thanks to some ascii math
+                        Game.wc.uiManager.ChooseOption(c - '1'); // returns 0 for "1", 1, for "2", and 2 for "3", thanks to some ascii math
                     }
                 }
             break;

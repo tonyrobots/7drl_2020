@@ -8,6 +8,13 @@ public class Player:Actor
 
     public FOVHelper fovHelper = new FOVHelper();
     public int XP = 0;
+    public float experienceModifier = 1f;
+
+    // This is a little tricky. It is a queue of a list of upgrade options. Each list is the 3 options presented (e.g. on level up). Since a player
+    // can potentially advance multiple levels at once, this queue will store the option sets, allow the player to work through them all and select one 
+    // at a time. Also useful because we want to let enemy turns finish before showing the options panel. Could be overkill.
+
+    Queue<List<UpgradeOption>> upgradesOnDeck = new Queue<List<UpgradeOption>>();
 
     public Player(Tile startingTile) // init by Tile
     {
@@ -16,7 +23,7 @@ public class Player:Actor
         // PlaceAtTile(startingTile);
         fovHelper.FOV(Tile);
         //Tile.Enter(this);
-        health = new Health(20, this);
+        health = new Health(25, this);
         Name = "Player";
         Name = TextAssetHelper.GetRandomLinefromTextAsset("names");
         Symbol = "@";
@@ -24,6 +31,7 @@ public class Player:Actor
         // fovHelper.FOV(Tile);
         myWeapon = new Weapon();
         myWeapon.Initialize("Bare Hands", ".",Color.white, "1d3",2);
+        DamageDice = "1d3";
         myWeapon.isCarryable = false;
         INVENTORY_LIMIT = 12;
     }
@@ -64,6 +72,7 @@ public class Player:Actor
     public void Tick(int currentTurn) {
         // do all "tick" actions that have registered. Need to figure out how to handle.
         health.Tick();
+
     }
 
     public override void Die() {
@@ -100,17 +109,26 @@ public class Player:Actor
     }
 
     public int XPNeededForNextLevel() {
-        return 50 * charLevel * (1 + charLevel);
+        return 25 * charLevel * (1 + charLevel);
+        // return (5 * charLevel);
     }
 
     void AdvanceLevel(int newLevel) {
         charLevel = newLevel;
         Map.Game.Log($"<#448622>You are now level {charLevel}!</color>");
-        // present some advancement options
-        // temp, increase some stats:
-        health.MaxHitpoints += 10;
-        strength +=5;
-        agility +=5;
+
         health.Hitpoints = health.MaxHitpoints;
+
+        // present some advancement options
+        // let's try this decision panel thing
+        upgradesOnDeck.Enqueue(UpgradeOption.GenerateUpgradeOptions(this, newLevel));
     }
+
+    public void ProcessUpgrades() {
+        if (upgradesOnDeck.Count > 0) {
+            // this will just present one each turn, but at least you get all of your upgrades if you somehow advance more than one level at once.
+            Map.Game.PresentUpgradeOptions(upgradesOnDeck.Dequeue(), $"<b>Welcome to level {charLevel}!</b>\nChoose one of the following:");
+        }
+    }
+
 }

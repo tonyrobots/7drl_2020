@@ -107,7 +107,7 @@ public class Item : Entity
 
     public static Item GenerateGold(int amount) {
         Item newGold = new Item();
-        newGold.Initialize($"{amount} gold", "$", new Color(.3f, .3f, 0f), (actor, item) => { ItemEffects.Gold(actor, item, amount); }, true);
+        newGold.Initialize($"{amount} gold", "$", new Color(.4f, .4f, .2f, .5f), (actor, item) => { ItemEffects.Gold(actor, item, amount); }, true);
         newGold.isConsumable=true;
         newGold.numberOfUses=1;
         return newGold;
