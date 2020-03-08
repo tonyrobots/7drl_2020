@@ -53,6 +53,7 @@ public class Player:Actor
         } else if (targetTile.GetActorOnTile() != null ) {
             Actor targetEnemy = targetTile.GetActorOnTile();
             Map.Game.combat.Attack(this, targetEnemy);
+            Map.Game.wc.uiManager.ShowMonsterInfo(targetEnemy as Monster);
             Map.Game.AdvanceTurn();
             if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
         }
@@ -69,8 +70,13 @@ public class Player:Actor
             if (i.AutoActivate) {
                 i.ActivateItem(this);
             } else {
-            Map.Game.Log($"You see a {i.Name} here. (Press 'g' to pick up)");
+                Map.Game.Log($"You see a {i.Name} here. (Press 'g' to pick up)");
+                if (i.GetType() == typeof(Weapon)) {
+                    Map.Game.wc.uiManager.ShowWeaponInfo(i as Weapon);
+                }
             }
+        } else {
+            Map.Game.wc.uiManager.HideInfoPanel();
         }
         Map.Game.AdvanceTurn();
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        

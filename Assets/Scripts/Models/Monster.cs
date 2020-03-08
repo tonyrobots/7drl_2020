@@ -122,6 +122,7 @@ public class Monster : Actor
         Color = new Color(.6f,.4f,.2f,.4f);
         isAlive = false;
         isPassable = true;
+        Map.Game.wc.uiManager.HideInfoPanel(); // should abstract this so we don't need to be aware of wc or uimanager at this level
         Name += " corpse";
         DropLoot(.5f); // drop loot 50% of the time
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks

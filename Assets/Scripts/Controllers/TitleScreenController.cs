@@ -23,8 +23,11 @@ public class TitleScreenController : MonoBehaviour
     {
 
         // if (Input.anyKeyDown && startButton.isActiveAndEnabled) {
-        //     StartGame();
-        // }
+
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape))
+        {
+            StartGame();
+        }
         
     }
 

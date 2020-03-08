@@ -38,6 +38,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject welcomePanel = null;
     [SerializeField] private GameObject helpPanel = null;
     [SerializeField] private GameObject winnerPanel = null;
+    [SerializeField] private GameObject infoPanel = null;
+
 
 
     // Decision UI
@@ -215,5 +217,26 @@ public class UIManager : MonoBehaviour
         //welcomePanel.transform.localScale = new Vector3(0, 0, 0);
         winnerPanel.SetActive(false);
     }
+
+    public void ShowMonsterInfo(Monster m) { // tODO should genericize these
+        if (m.isAlive) 
+        {
+            infoPanel.GetComponentsInChildren<TextMeshProUGUI>()[0].text=m.Name;
+            infoPanel.GetComponentsInChildren<TextMeshProUGUI>()[1].text = $"Health: {m.health.Hitpoints}\nDamage Dice:{m.DamageDice}\nStrength:{m.strength}\nAgility:{m.agility}\nArmor:{m.armor}";
+            infoPanel.SetActive(true);
+        }
+    }
+    public void ShowWeaponInfo(Weapon w)
+    {
+        infoPanel.GetComponentsInChildren<TextMeshProUGUI>()[0].text = w.Name;
+        infoPanel.GetComponentsInChildren<TextMeshProUGUI>()[1].text = $"Damage Dice:{w.DamageDice}";
+        infoPanel.SetActive(true);
+
+    }
+    public void HideInfoPanel()
+    {
+        infoPanel.SetActive(false);
+    }
+
 
 }

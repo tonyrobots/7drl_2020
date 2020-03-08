@@ -16,6 +16,10 @@ public class ItemController : MonoBehaviour
     {
         Item_data.RegisterEntityChangedCallback((entity) => { Refresh(entity, gameObject); });
         Refresh(item_data, gameObject);
+        if (item_data.GetType() == typeof(Weapon)){
+            // add collider for mouseover info
+            gameObject.AddComponent<BoxCollider2D>();
+        }
 
     }
 
@@ -45,6 +49,16 @@ public class ItemController : MonoBehaviour
 
     }
 
+    void OnMouseEnter()
+    {
+        item_data.Map.Game.wc.uiManager.ShowWeaponInfo(item_data as Weapon); // this is a long path!
+    }
+
+    void OnMouseExit()
+    {
+        item_data.Map.Game.wc.uiManager.HideInfoPanel();
+
+    }
     void OnDestroy() {
         item_data.UnregisterEntityChangedCallback((entity) => { Refresh(entity, gameObject); });
     }

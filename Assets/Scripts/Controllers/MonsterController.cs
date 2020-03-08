@@ -15,6 +15,7 @@ public class MonsterController : MonoBehaviour
     {
         Monster_data.RegisterEntityChangedCallback((entity) => { Refresh(entity, gameObject); });
         Refresh(monster_data, gameObject);
+        gameObject.AddComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
@@ -41,6 +42,21 @@ public class MonsterController : MonoBehaviour
         {
             transform.localScale = new Vector3(0, 0, 0);
         }
+
+    }
+
+    void OnMouseEnter()
+    {
+        if (monster_data.isAlive) {
+            Debug.Log($"{monster_data.Name} has {monster_data.health.Hitpoints}");
+            monster_data.Map.Game.wc.uiManager.ShowMonsterInfo(monster_data); // this is a long path!
+        }
+    }
+
+    void OnMouseExit()
+    {
+        Debug.Log($"mouse exit from {monster_data.Name} ");
+        monster_data.Map.Game.wc.uiManager.HideInfoPanel();
 
     }
 
