@@ -26,7 +26,7 @@ public class InputManager : MonoBehaviour
                     Game.wc.uiManager.ShowHelpPanel();
                 }
 
-                else if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Escape)) 
+                else if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape)) 
                 {
                     Game.wc.uiManager.HideWelcomePanel();
                 }
@@ -94,7 +94,7 @@ public class InputManager : MonoBehaviour
                     // open drop item menu
                     Game.OpenPlayerInventory(Game.GameStates.INVENTORY_DROP);
                 }
-                else if (Input.GetKeyDown(KeyCode.U))
+                else if (Input.GetKeyDown(KeyCode.U) || Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.R))
                 {
                     // open use item menu
                     Game.OpenPlayerInventory(Game.GameStates.INVENTORY_USE);
@@ -120,7 +120,7 @@ public class InputManager : MonoBehaviour
                 else if (Input.GetKeyDown(KeyCode.S))
                 {
                     Game.DescendToNextLevel();
-                    Debug.Log("descending?");
+                    // Debug.Log("descending?");
                 }
 #endif
                 else if (Input.GetKeyDown(KeyCode.M))

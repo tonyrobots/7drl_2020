@@ -326,7 +326,8 @@ public class Map
     void GenerateAndPlaceStairsDown()
     {
         Item newStairs = new Item("down stairs"); // down stairs are up stairs for now, deal with it
-        newStairs.PlaceAtTile(GetRandomEmptyFloorTile());
+        // newStairs.PlaceAtTile(GetRandomEmptyFloorTile());
+        newStairs.PlaceAtTile(GetTile(rooms[1].Center().x,rooms[1].Center().y));
     }
 
     void DigTunnel(Tile startTile, Tile endTile) {
