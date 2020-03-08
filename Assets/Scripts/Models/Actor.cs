@@ -69,7 +69,7 @@ public abstract class Actor : Entity
             i.CarriedBy = this;
             return true;
         } else if (inventory.Count < INVENTORY_LIMIT) {
-            Map.Game.Log($"{Name} picks up a {i.Name}");
+            Map.Game.Log($"{Name} picks up a {i.Name}.");
             Inventory.Add(i);
             i.CarriedBy = this;
             return true;
@@ -110,15 +110,14 @@ public abstract class Actor : Entity
         if (myWeapon != null && myWeapon.isCarryable ) {
             // drop current weapon if it's carryable, which should be all weapons besides 'bare hands'
             DropItem(myWeapon);
-            Map.Game.Log("You drop the " + myWeapon.Name);
+            Map.Game.Log($"You drop the {myWeapon.Name}.");
         }
         myWeapon = w;
-        Map.Game.Log("You wield the " + myWeapon.Name); 
+        Map.Game.Log($"You wield the {myWeapon.Name}."); 
         DamageDice = w.DamageDice;
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
 
     }
-
 
     public string ListInventoryAsString(){
         string inv = "";

@@ -20,6 +20,25 @@ public class InputManager : MonoBehaviour
     void Update() {
         switch (game.gamestate)
         {
+            case Game.GameStates.WELCOME:
+                if (Input.inputString == "?") {
+                    Game.wc.uiManager.HideWelcomePanel();
+                    Game.wc.uiManager.ShowHelpPanel();
+                }
+
+                else if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Escape)) 
+                {
+                    Game.wc.uiManager.HideWelcomePanel();
+                }
+            break;
+
+            case Game.GameStates.HELP:
+                if (Input.inputString == "?" || Input.GetKeyDown(KeyCode.Escape))
+                {
+                    Game.wc.uiManager.HideHelpPanel();
+                }
+            break;
+
             // Player Moves
             case Game.GameStates.PLAYER_TURN:
 
@@ -92,13 +111,18 @@ public class InputManager : MonoBehaviour
                 else if (Input.GetKeyDown(KeyCode.Escape)) {
                     Game.ClosePlayerInventory();
                 }
+                else if (Input.inputString == "?")
+                {
+                    Game.wc.uiManager.ShowHelpPanel();
+                }
 
+#if UNITY_EDITOR
                 else if (Input.GetKeyDown(KeyCode.S))
                 {
                     Game.DescendToNextLevel();
                     Debug.Log("descending?");
                 }
-
+#endif
                 else if (Input.GetKeyDown(KeyCode.M))
                 // explore map mode
                 {

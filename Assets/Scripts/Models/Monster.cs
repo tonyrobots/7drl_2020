@@ -12,6 +12,7 @@ public class Monster : Actor
 
     public Monster(Map map) {
         Map=map;
+        isRemembered = false;
     }
 
 
@@ -63,7 +64,17 @@ public class Monster : Actor
 
     }
 
+    public void Move(Tile targetTile)
+    {
+        if (targetTile.IsPassable())
+        { 
+            PlaceAtTile(targetTile);
+        }
+
+    }
+
     public void MoveRandomly() {
+    
         int random_x;
         int random_y;
         if (UnityEngine.Random.Range(0,2) == 0) {
@@ -81,7 +92,18 @@ public class Monster : Actor
         if (Tile.IsAdjacentTo(playerTile)) {
             Map.Game.combat.Attack(this,Map.Game.Player);
         } else {
-            MoveRandomly();
+            // Moving toward player all the time is TOO hard! They're like little terminators. Will mix it up a bit. 
+            // They get more aggressive as you go deeper into the fortress.
+            int roll = Random.Range(1, (Map.Game.FinalDungeonLevel * 15));
+
+            if (roll > (Map.Game.DungeonLevel * 12))
+            {
+                MoveRandomly();
+            }
+            else
+            {
+               Move(Map.GetNextTileTowardDestination(Tile, playerTile));
+            }
         }
     }
 
@@ -102,7 +124,15 @@ public class Monster : Actor
         isPassable = true;
         Name += " corpse";
         DropLoot(.5f); // drop loot 50% of the time
-        if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
+        if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
+
+        // if this == Lemon King, you win!
+        if (Name == "Lemon King corpse") 
+        {
+            // Map.Game.Log("You win! The evil Lemon King has been vanquished and your village is free of his tyranny!");
+
+            Map.Game.GameOver(winner:true);
+        }
 
     }
 

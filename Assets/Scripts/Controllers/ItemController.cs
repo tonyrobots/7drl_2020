@@ -35,9 +35,11 @@ public class ItemController : MonoBehaviour
             TextMeshPro tmp = GetComponent<TextMeshPro>();
             tmp.text = entity.Symbol.ToString();
             tmp.color = entity.Color;
-            tmp.alignment = TextAlignmentOptions.Center;        }
-        else
-        {
+            tmp.alignment = TextAlignmentOptions.Center;
+            if (!entity.Tile.IsVisible) {
+                tmp.color = new Color(.2f, .2f, .2f); // items that are "remembered" but not currently seen are grey
+            }       
+        } else {
             transform.localScale = new Vector3(0, 0, 0);
         }
 

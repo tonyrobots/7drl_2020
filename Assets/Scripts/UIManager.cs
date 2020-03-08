@@ -35,6 +35,10 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI messagesField = null;
 
+    [SerializeField] private GameObject welcomePanel = null;
+    [SerializeField] private GameObject helpPanel = null;
+    [SerializeField] private GameObject winnerPanel = null;
+
 
     // Decision UI
     [SerializeField] private Transform decisionPanel = null;
@@ -47,7 +51,8 @@ public class UIManager : MonoBehaviour
     public bool InventoryIsOpen;
 
     public void Start() {
-        
+        ShowWelcomePanel();
+        HideHelpPanel();        
     }
 
     public void UpdateAll() {
@@ -58,6 +63,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdatePlayerStats(Game game)
     {
+
         this.game = game;
 
         nameField.text = game.Player.Name;
@@ -80,7 +86,7 @@ public class UIManager : MonoBehaviour
         XPField.text = $"{game.Player.XP}/{game.Player.XPNeededForNextLevel()}";
         XPBar.localScale = new Vector3(((float)game.Player.XP / game.Player.XPNeededForNextLevel()), 1f, 1f);
 
-        DLevelField.text = $"Dungeon Depth: {game.DungeonLevel * 50}'";
+        DLevelField.text = $"Fortress Level: {game.DungeonLevel}";
         turnsField.text = $"Turns: {game.TurnCount}";
         strField.text = $"{game.Player.strength}";
         agiField.text = $"{game.Player.agility}";
@@ -140,7 +146,7 @@ public class UIManager : MonoBehaviour
         }
 
 
-        messagesField.text = messageToShow;
+        if (messageToShow != "") messagesField.text = messageToShow;
     }
 
     public void ShowDecisionPanel(Player player, List<UpgradeOption> options, string headerText)
@@ -167,13 +173,47 @@ public class UIManager : MonoBehaviour
         Debug.Log("closing decision panel");
     }
 
-    // public void UpdateMessageLog(Game game) {
-    //     string messageToShow = "";
-    //     foreach (Message m in game.messageLog)
-    //     {   
-    //         messageToShow += $"<{m.hexColor}>{m.messageText}</color>. ";
-    //     }
-    //     messagesField.text = messageToShow;
+    public void ShowHelpPanel () {
+        // helpPanel.transform.localScale = new Vector3(1,1,1);
+        helpPanel.SetActive(true);
+        if (game != null) game.gamestate = Game.GameStates.HELP;
+    }
 
-    // }
+    public void HideHelpPanel() {
+        // helpPanel.transform.localScale = new Vector3(0,0,0);
+        helpPanel.SetActive(false);
+        if (game != null) game.gamestate = Game.GameStates.PLAYER_TURN;
+
+
+    }
+
+    public void ShowWelcomePanel()
+    {
+        //welcomePanel.transform.localScale = new Vector3(1, 1, 1);
+        welcomePanel.SetActive(true);
+        // game.gamestate = Game.GameStates.WELCOME;
+
+
+    }
+
+    public void HideWelcomePanel()
+    {
+        //welcomePanel.transform.localScale = new Vector3(0, 0, 0);
+        welcomePanel.SetActive(false);
+        if (game != null) game.gamestate = Game.GameStates.PLAYER_TURN;
+    }
+
+    public void ShowWinnerPanel()
+    {
+        //welcomePanel.transform.localScale = new Vector3(1, 1, 1);
+        winnerPanel.SetActive(true);
+        // game.gamestate = Game.GameStates.WELCOME;
+    }
+
+    public void HideWinnerPanel()
+    {
+        //welcomePanel.transform.localScale = new Vector3(0, 0, 0);
+        winnerPanel.SetActive(false);
+    }
+
 }

@@ -88,34 +88,49 @@ public class Map
                 }
             }
 
-            // Temp: add a monster to the middle of the room, except for first room
-            // if (i>0) {
-            //     AddMonster( new Monster(GetTile(newRoom.Center().x, newRoom.Center().y),"M", Color.green, "scary monster") );
-            PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomEmptyFloorTile());
-            // }
+            //  add a monster to the middle of the room, except for first room
+            if (i>0) {
+                PlaceRandomMonsterForLevel(game.DungeonLevel, GetTile(newRoom.Center().x, newRoom.Center().y));
+            }
 
 
         }
         GenerateHalls();
 
         // Temp: add some loot randomly around
-        for (int j = 0; j < Random.Range(3, 7); j++)
+        for (int j = 0; j < Random.Range(1, 5); j++)
         {
-            // Item newItem = new Item(GetRandomFloorTile(), "!", Color.blue, "healing potion", (actor, item) => { ItemEffects.HealingPotion(actor, item, 10);});
-            // Item newItem = new Item();
-            // newItem.Initialize("healing potion", "!", Color.blue, (actor, item) => { ItemEffects.HealingPotion(actor, item, 10); });
-            Item newItem = GenerateLoot(game.Level);
-            newItem.PlaceAtTile(GetRandomEmptyFloorTile());
+            new Item("healing potion").PlaceAtTile(GetRandomEmptyFloorTile()); // healing potion
+            GenerateLoot(game.DungeonLevel).PlaceAtTile(GetRandomEmptyFloorTile()); //random loot
         }
 
         // and  couple more  monsters for good measure:
-        for (int m = 0; m < Random.Range(0,6); m++)
+        for (int m = 0; m < Random.Range(0,4); m++)
         {
             PlaceRandomMonsterForLevel(game.DungeonLevel, GetRandomEmptyFloorTile());
         }
-        Weapon w = GenerateWeapon();
-        w.PlaceAtTile(GetRandomEmptyFloorTile());
-        GenerateAndPlaceStairsDown();
+        GenerateWeapon().PlaceAtTile(GetRandomEmptyFloorTile()); // make sure there's a weapon somewhere
+
+        // if this is the final level, don't add stairs, and add the BOSS, let's make this nicer later :D
+        if (game.DungeonLevel == game.FinalDungeonLevel) {
+            // create a boss man
+            Monster boss = new Monster(this);
+            boss.Name = "Lemon King";
+            boss.Symbol = "<b>X</b>";
+            boss.strength = 80;
+            boss.agility=50;
+            boss.armor=5;
+            boss.health = new Health(120, boss);
+            // boss.health = new Health(1, boss);
+            boss.DamageDice = "8d6";
+            // boss.DamageDice = "1d1";
+            boss.Color = Color.black;
+            boss.gold = 10000;
+            boss.PlaceAtTile(GetRandomEmptyFloorTile());
+            Debug.Log("adding boss man at " + boss.Tile);
+        } else {
+            GenerateAndPlaceStairsDown(); // add some stairs
+        }
     }
 
 
@@ -149,7 +164,11 @@ public class Map
 
     public void SetAllDungeonItemsVisibility() {
         foreach (Entity e in Entities) {
-            e.IsVisible = e.Tile.IsVisible;
+            if (e.isRemembered) {
+                e.IsVisible = e.Tile.IsExplored;
+            } else {
+                e.IsVisible = e.Tile.IsVisible;
+            }
         }
     }
 
@@ -215,8 +234,8 @@ public class Map
         newWeapon.Weight = System.Int32.Parse(lines[4]);
 
         if (Dice.Roll("d100") < 5) {
-            newWeapon.Name += " of sharpness";
-            newWeapon.myEffectFunction = (actor, item) => { ItemEffects.Bleeder(actor, item, 5); };
+            // make it SHARP
+            newWeapon.Sharpen();
         }
 
         //magical bonus?
@@ -270,7 +289,7 @@ public class Map
 
             case "item":
                 // hardcode for now, fix later!
-                string[] itemTypes = { "healing potion", "scroll of mapping", "scroll of teleportation" }; // should use enum here
+                string[] itemTypes = { "healing potion", "refined healing potion", "scroll of mapping", "scroll of teleportation", "wand of teleportation", "wand of healing" }; // should use enum here
                 string myItemType = itemTypes[Random.Range(0, itemTypes.Length)];
                 lootItem = new Item(myItemType);
             break;
@@ -283,9 +302,30 @@ public class Map
         return lootItem;
     }
 
+    public Tile GetNextTileTowardDestination(Tile currentTile, Tile destTile) // bootleg pathing algo b/c I don't have time for A*!
+    {
+        // int dy = (currentTile.Y - destTile.Y);
+        // int dx = (currentTile.X - destTile.X);
+        int dist = GetManhattanDistanceBetweenTiles(currentTile, destTile);
+
+        List<Tile> walkableTiles = currentTile.GetAdjacentPassableTiles();
+        Tile chosenTile = null;
+        int bestDist = 1000;
+
+        foreach (Tile t in walkableTiles) {
+            int newDist = GetManhattanDistanceBetweenTiles(t, destTile);
+            if (newDist < bestDist) {
+                bestDist=newDist;
+                chosenTile = t;
+            }
+        }
+        return chosenTile;
+
+    }
+
     void GenerateAndPlaceStairsDown()
     {
-        Item newStairs = new Item("down stairs");
+        Item newStairs = new Item("down stairs"); // down stairs are up stairs for now, deal with it
         newStairs.PlaceAtTile(GetRandomEmptyFloorTile());
     }
 

@@ -14,6 +14,7 @@ public abstract class Entity
     bool isVisible = false;
     public bool isPassable = false;
     public bool isCarryable = false;
+    public bool isRemembered = true; // whether to remember this entity's location on the map, once seen. Kind of a hack to deal with staircases for now, since they are still just treated as items
 
     protected Action<Entity> cbEntityChanged;
 
@@ -22,7 +23,18 @@ public abstract class Entity
     public Color Color { get => color; set => color = value; }
     public Map Map { get => map; set => map = value; }
     public string Name { get => name; set => name = value; }
-    public bool IsVisible { get => isVisible; set { 
+    public bool IsVisible { get {
+            // this may be bug-prone?
+            if (Tile == null) return false;
+            else if (isRemembered)
+            {
+                return Tile.IsExplored;
+            }
+            else
+            {
+                return Tile.IsVisible;
+            }
+        } set { 
         isVisible = value;
         if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks        
         }
@@ -80,6 +92,7 @@ public abstract class Entity
         i.CarriedBy = null;
         i.PlaceAtTile(Tile.GetRandomAdjacentEmptyTile());
     }
+
 
 
 

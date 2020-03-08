@@ -7,12 +7,16 @@ public class Game
 {
     int turnCount = 0;
     int dungeonLevel = 1;
+    int finalDungeonLevel = 6;
+
     int messageLogLimit = 8;
 
     public WorldController wc;
 
     public enum GameStates
     {
+        WELCOME,
+        HELP,
         PLAYER_TURN,
         ENEMY_TURN,
         PLAYER_DEAD,
@@ -22,12 +26,11 @@ public class Game
         UPGRADE_MENU
     }
 
-    public GameStates gamestate = GameStates.PLAYER_TURN;
+    public GameStates gamestate = GameStates.WELCOME;
     public bool allowDiagonalMovement=true;
     
     private Map currentMap;
     private Player player;
-    private int level=1;
     public CombatSystem combat;
 
     public Queue<Message> messageLog;
@@ -37,9 +40,8 @@ public class Game
     public Map CurrentMap { get => currentMap; set => currentMap = value; }
     public int TurnCount { get => turnCount; set => turnCount = value; }
     public Player Player { get => player; set => player = value; }
-    public int Level { get => level; set => level = value; }
     public int DungeonLevel { get => dungeonLevel; set => dungeonLevel = value; }
-
+    public int FinalDungeonLevel { get => finalDungeonLevel; set => finalDungeonLevel = value; }
 
     public Game() {
         // messageLog = new MessageLog(this);
@@ -56,6 +58,8 @@ public class Game
         if (wc.useAscii) {
             player.Color = Color.white;
         }
+
+        Log($"Welcome to the <#ffff00>Citrus Fortress</color>! Climb to level {finalDungeonLevel} to find and defeat the mighty Lemon King. But first you're going to need a weapon...");
         
     }
 
@@ -134,15 +138,22 @@ public class Game
     public void Log(string simpleMessage) {
         Message m = new Message(simpleMessage);
         messageLog.Enqueue(m);
-        Debug.Log(m.messageText);
+        //Debug.Log(m.messageText);
 
         if (messageLog.Count > messageLogLimit) {
             messageLog.Dequeue();
         }
     }
 
-    public void GameOver()
-    {   
+    public void GameOver(bool winner=false)
+    {
+        // TODO show game over screen in ui
+        gamestate = Game.GameStates.PLAYER_DEAD;
+
+
+        if (winner) {
+            wc.uiManager.ShowWinnerPanel();
+        }
         Log("Game is over. Hit space to restart.");
         wc.FinalizeTurn();
 
@@ -166,13 +177,15 @@ public class Game
 
         currentMap = null;
 
+        // Set level number
+        dungeonLevel = newLevel;
+
         // generate new map
         currentMap = GenerateMap(newLevel);
 
         wc.GenerateMapGameObjects(currentMap);
 
-        // Set level number
-        dungeonLevel = newLevel;
+ 
 
         // place player
         player.Map = currentMap;

@@ -31,14 +31,21 @@ public class Item : Entity
         switch (type)
         {
             case "healing potion":
-                Initialize("Healing Potion", "!", Color.blue, (actor, item) => { ItemEffects.HealingPotion(actor, item, 10); });
+                Initialize("Healing Potion", "!", Color.blue, (actor, item) => { ItemEffects.HealingPotion(actor, item, 14); });
                 isConsumable = true;
                 break;
 
+            case "refined healing potion":
+                Initialize("Refined Healing Potion", "!", new Color(.2f,.05f,.8f), (actor, item) => { ItemEffects.HealingPotion(actor, item, 30); });
+                isConsumable = true;
+                break;
+
+
             case "down stairs":
-                Initialize("Stairs Down", ">", Color.black, (actor, item) => { ItemEffects.DescendLevel(actor, item, 0); });
+                Initialize("Stairs To Next Level", "<", Color.black, (actor, item) => { ItemEffects.DescendLevel(actor, item, 0); });
                 isCarryable=false;
                 autoActivate=true;
+                isRemembered=true;
                 break;
 
             case "scroll of mapping":
@@ -49,6 +56,18 @@ public class Item : Entity
             case "scroll of teleportation":
                 Initialize("Scroll of Teleportation", "?", Color.magenta, (actor, item) => { ItemEffects.Teleport(actor, item, 0); });
                 isConsumable = true;
+                break;
+            
+            case "wand of teleportation":
+                Initialize("Wand of Teleportation", "-", Color.magenta, (actor, item) => { ItemEffects.Teleport(actor, item, 0); });
+                isConsumable=true;
+                numberOfUses=UnityEngine.Random.Range(2,10);
+                break;
+
+            case "wand of healing":
+                Initialize("Wand of Healing", "-", Color.blue, (actor, item) => { ItemEffects.HealingItem(actor, item, 10); });
+                isConsumable = true;
+                numberOfUses = UnityEngine.Random.Range(2, 10);
                 break;
 
             default:
@@ -81,6 +100,9 @@ public class Item : Entity
                 if (isConsumable) {
                     numberOfUses--;
                     if (numberOfUses == 0) this.Consume();
+                    else {
+                        Map.Game.Log($"The {Name} has {numberOfUses} uses left.");
+                    }
                 }
             }
         } 
@@ -96,6 +118,7 @@ public class Item : Entity
         Debug.Log($"consuming {Name}");
         this.RemoveFromMap();
         if (CarriedBy != null) CarriedBy.RemoveFromInventory(this);
+        //Map.Game.Log($"The {Name} has been used up."); // TODO: keep this for things like wands. just don't want it for things like potions and gold.
         Name += " (consumed)";
         // kill gameobject somehow?
         OnEntityChangedCallbacks();

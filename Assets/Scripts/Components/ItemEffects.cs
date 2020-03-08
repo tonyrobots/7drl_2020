@@ -9,10 +9,24 @@ public static class ItemEffects
     {
         if (target.health.Hitpoints < target.health.MaxHitpoints)
         {
-            target.Map.Game.Log($"You drink the potion.");
-            target.health.Heal(UnityEngine.Random.Range(4, value));
+            target.Map.Game.Log($"You drink the {item.Name}.");
+            target.health.Heal(UnityEngine.Random.Range(Mathf.FloorToInt(value/2), value));
             //item.Consume();
         } else {
+            target.Map.Game.Log($"You don't need that right now.");
+        }
+    }
+
+    public static void HealingItem(Actor target, Item item, int value)
+    {
+        if (target.health.Hitpoints < target.health.MaxHitpoints)
+        {
+            target.Map.Game.Log($"You use the {item.Name}.");
+            target.health.Heal(UnityEngine.Random.Range(Mathf.FloorToInt(value / 2), value));
+            //item.Consume();
+        }
+        else
+        {
             target.Map.Game.Log($"You don't need that right now.");
         }
     }
@@ -26,13 +40,14 @@ public static class ItemEffects
 
     public static void Bleeder(Actor target, Item item, int value) 
     {
-        target.Map.Game.Log("Your weapon inflicts a nasty wound");
+        target.Map.Game.Log("Your weapon inflicts a nasty wound.");
         target.health.InflictBleeding(value);
     }
 
     public static void DescendLevel(Actor target, Item item, int value) {
-        target.Map.Game.Log("You descend the stairs");
         target.Map.Game.DescendToNextLevel();
+        target.Map.Game.Log($"You climb the stairs to level {target.Map.Game.DungeonLevel}.");
+
     }
 
     public static void RevealMap(Actor target, Item item, int value) {

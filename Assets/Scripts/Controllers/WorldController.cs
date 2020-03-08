@@ -41,7 +41,6 @@ public class WorldController : MonoBehaviour
         // why is this necessary?
         map.SetAllDungeonItemsVisibility();
 
-        // uiManager.InitializeUIManager(game);
         uiManager.UpdatePlayerStats(game);
         uiManager.UpdateMessageLog(game);
         uiManager.HideInventory();

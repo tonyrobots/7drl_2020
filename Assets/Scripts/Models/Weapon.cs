@@ -24,4 +24,11 @@ public class Weapon:Item {
         myEffectFunction = itemEffectFunction;
     }
 
+    public void Sharpen() {
+        if (myEffectFunction == null) { //only if doesn't already have an effect. In future effects should be a list, and should be set as an attribute rather than ad hoc like this
+            Name += " of Sharpness";
+            myEffectFunction = (actor, item) => { ItemEffects.Bleeder(actor, item, 5); };
+        }
+    }
+
 }

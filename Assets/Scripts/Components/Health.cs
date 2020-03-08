@@ -22,7 +22,7 @@ public class Health
 
     public void TakeDamage(int damage) {
         _hitpoints -= damage;
-        _parent.Map.Game.Log($"{_parent.Name} takes {damage} damage.");
+        // _parent.Map.Game.Log($"{_parent.Name} takes {damage} damage.");
 
 
 

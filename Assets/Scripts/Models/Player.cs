@@ -24,8 +24,8 @@ public class Player:Actor
         fovHelper.FOV(Tile);
         //Tile.Enter(this);
         health = new Health(25, this);
-        Name = "Player";
-        Name = TextAssetHelper.GetRandomLinefromTextAsset("names");
+        Name = LoadName();
+        // Name = TextAssetHelper.GetRandomLinefromTextAsset("names");
         Symbol = "@";
         Color = Color.black;
         // fovHelper.FOV(Tile);
@@ -34,6 +34,14 @@ public class Player:Actor
         DamageDice = "1d3";
         myWeapon.isCarryable = false;
         INVENTORY_LIMIT = 12;
+    }
+
+    public static string LoadName() {
+        if (PlayerPrefs.HasKey("name") && PlayerPrefs.GetString("name") != "" ) {
+            return PlayerPrefs.GetString("name");
+        } else {
+            return TextAssetHelper.GetRandomLinefromTextAsset("names");
+        }
     }
 
     public void AttemptMove(int x, int y) {
@@ -83,7 +91,6 @@ public class Player:Actor
             Color = new Color(.4f, .2f, .2f);
             isAlive = false;
             if (cbEntityChanged != null) cbEntityChanged(this); // call callbacks
-            Map.Game.gamestate = Game.GameStates.PLAYER_DEAD;
             Map.Game.GameOver();
         }
     }

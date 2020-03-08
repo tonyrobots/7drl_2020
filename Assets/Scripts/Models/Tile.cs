@@ -129,6 +129,23 @@ public class Tile
         return emptyTiles;
     }
 
+    public List<Tile> GetAdjacentPassableTiles() // can combine this with the previous one, no time right now!
+    {
+        List<Tile> passableTiles = new List<Tile>();
+        for (int x = -1; x < 2; x++)
+        {
+            for (int y = -1; y < 2; y++)
+            {
+                Tile t = Map.GetTile(X + x, Y + y);
+                if (t.IsPassable())
+                {
+                    passableTiles.Add(t);
+                }
+            }
+        }
+        return passableTiles;
+    }
+
     public Tile GetRandomAdjacentEmptyTile() {
         List<Tile> emptyTiles = GetAdjacentEmptyTiles();
         return emptyTiles[UnityEngine.Random.Range(0,emptyTiles.Count)];
