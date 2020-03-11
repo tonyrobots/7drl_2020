@@ -117,12 +117,12 @@ public class Map
             Monster boss = new Monster(this);
             boss.Name = "Lemon King";
             boss.Symbol = "<b>X</b>";
-            boss.strength = 80;
+            boss.strength = 65;
             boss.agility=50;
-            boss.armor=5;
+            boss.armor=4;
             boss.health = new Health(120, boss);
             // boss.health = new Health(1, boss);
-            boss.DamageDice = "8d6";
+            boss.DamageDice = "6d6";
             // boss.DamageDice = "1d1";
             boss.Color = Color.black;
             boss.gold = 10000;

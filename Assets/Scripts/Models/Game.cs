@@ -202,8 +202,8 @@ public class Game
         Map newMap;
 
         // big map
-        newMap = new Map(width:50, height:25, this);
-        newMap.GenerateRooms(maxWidth:12, maxHeight:12, maxRooms:18, minWidth:5, minHeight:3);
+        newMap = new Map(width:65, height:35, this);
+        newMap.GenerateRooms(maxWidth:12, maxHeight:10, maxRooms:18, minWidth:5, minHeight:3);
 
         // small map
         // newMap = new Map(width:25, height:15, this);

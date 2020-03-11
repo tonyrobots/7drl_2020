@@ -31,14 +31,14 @@ public class UpgradeOption
 
         List<UpgradeOption> upgradesMasterList = new List<UpgradeOption>();
 
-        upgradesMasterList.Add(new UpgradeOption($"Strength +{value}", $"You add {value} strength, which will help you do more damage.", () => { UpgradeOption.IncreaseStrength(player, value); }));
-        upgradesMasterList.Add(new UpgradeOption($"Max Health +{2 * value}", $"You get {2*value} more health, so you are strong like ox.", () => { UpgradeOption.IncreaseMaxHP(player, value * 2); }));
+        upgradesMasterList.Add(new UpgradeOption($"Strength +{value+3}", $"You add {value+3} strength, which will help you do more damage.", () => { UpgradeOption.IncreaseStrength(player, value+3); }));
+        upgradesMasterList.Add(new UpgradeOption($"Max Health +{2 * value}", $"You get {2*value} more health, so you are tough like ox.", () => { UpgradeOption.IncreaseMaxHP(player, value * 2); }));
         upgradesMasterList.Add(new UpgradeOption($"Agility +{value}", $"You gain {value} agility, which will help you critically hit and evade attacks.", () => { UpgradeOption.increaseAgility(player, value); }));
-        upgradesMasterList.Add(new UpgradeOption($"Natural Armor +1", $"Your skin thickens to provide extra armor, reducing incoming damage.", () => { UpgradeOption.AddArmor(player, 1); }));
+        upgradesMasterList.Add(new UpgradeOption($"Natural Armor +{Mathf.CeilToInt(value/4)}", $"Your skin thickens to provide {Mathf.CeilToInt(value / 4)} extra armor, reducing incoming damage.", () => { UpgradeOption.AddArmor(player, Mathf.CeilToInt(value / 4)); }));
         upgradesMasterList.Add(new UpgradeOption($"{value*100} Gold", $"It's useless, but it's shiny!", () => { UpgradeOption.addGold(player, value*100); }));
         upgradesMasterList.Add(new UpgradeOption($"Quick Learner", $"You're a clever one! Gain Experience Points {value}% faster.", () => { UpgradeOption.IncreaseXPmodifier(player, value); }));
         upgradesMasterList.Add(new UpgradeOption($"Sharpen Weapon", $"Add the 'sharpness' trait to your weapon which causes bleeding.", () => { UpgradeOption.SharpenWeapon(player, 0); }));
-        upgradesMasterList.Add(new UpgradeOption($"Enchant Weapon", $"Add +1 to your current weapon damage", () => { UpgradeOption.EnchantWeapon(player, 1); }));
+        upgradesMasterList.Add(new UpgradeOption($"Enchant Weapon +{Mathf.CeilToInt(value / 4)}", $"Add +{Mathf.CeilToInt(value / 4)} to your current weapon damage", () => { UpgradeOption.EnchantWeapon(player, Mathf.CeilToInt(value / 4)); }));
 
 
 

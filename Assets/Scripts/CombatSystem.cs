@@ -5,6 +5,9 @@ using RogueSharp.DiceNotation;
 
 public class CombatSystem 
 {
+
+    public float STRENGTH_BONUS_MULTIPLIER=.111f;
+
     Game game;
 
     public CombatSystem(Game game) {
@@ -31,15 +34,16 @@ public class CombatSystem
 
         // determine the damage
         int weaponDamage = Dice.Roll(attacker.DamageDice);
+        if (crit) weaponDamage += Dice.Roll("2d6"); // crit increases damage before strength and armor are applied
 
-        int damage = Mathf.CeilToInt(attacker.strength/9f) + weaponDamage - target.armor; 
+
+        int damage = Mathf.RoundToInt(attacker.strength*STRENGTH_BONUS_MULTIPLIER) + weaponDamage - target.armor; 
 
         if (damage <= 0) {
             game.Log ($"{target.Name}'s armor absorbs the force of {attacker.Name}'s blow.");
             return;
         }
 
-        if (crit) damage *= 2;
         msg += $"for {damage} damage.";
         game.Log(msg);
         // apply the damage

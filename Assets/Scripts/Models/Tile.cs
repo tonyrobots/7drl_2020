@@ -98,7 +98,9 @@ public class Tile
         {
             // if (e.isCarryable)  // only works for carryable items. which is all of them, for now, but...
             // {
+                if (e.GetType() != typeof(Monster)) {
                 return e as Item; // this seems like some funky hoodoo
+                }
             // }
         }
         return null;

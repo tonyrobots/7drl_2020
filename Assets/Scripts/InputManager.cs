@@ -42,37 +42,37 @@ public class InputManager : MonoBehaviour
             // Player Moves
             case Game.GameStates.PLAYER_TURN:
 
-                if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Keypad8))
+                if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Keypad8) || Input.GetKeyDown(KeyCode.Alpha8))
                 {
                     Game.Player.AttemptMove(0, 1);
                 }
-                else if (Input.GetKeyDown(KeyCode.DownArrow)|| Input.GetKeyDown(KeyCode.Keypad2))
+                else if (Input.GetKeyDown(KeyCode.DownArrow)|| Input.GetKeyDown(KeyCode.Keypad2)|| Input.GetKeyDown(KeyCode.Alpha2))
                 {
                     Game.Player.AttemptMove(0, -1);
                 }
-                else if (Input.GetKeyDown(KeyCode.LeftArrow)|| Input.GetKeyDown(KeyCode.Keypad4))
+                else if (Input.GetKeyDown(KeyCode.LeftArrow)|| Input.GetKeyDown(KeyCode.Keypad4) || Input.GetKeyDown(KeyCode.Alpha4))
                 // else if (Input.GetAxis("Horizontal") <  -.1)
                 {
                     Game.Player.AttemptMove(-1, 0);
                 }
-                else if (Input.GetKeyDown(KeyCode.RightArrow)|| Input.GetKeyDown(KeyCode.Keypad6))
+                else if (Input.GetKeyDown(KeyCode.RightArrow)|| Input.GetKeyDown(KeyCode.Keypad6) || Input.GetKeyDown(KeyCode.Alpha6))
                 {
                     Game.Player.AttemptMove(1, 0);
                 }
 
                if (Game.allowDiagonalMovement) {
-                    if (Input.GetKeyDown(KeyCode.Keypad7)) {
+                    if (Input.GetKeyDown(KeyCode.Keypad7) || Input.GetKeyDown(KeyCode.Alpha7)) {
                         Game.Player.AttemptMove(-1, 1);
                     }
-                    else if (Input.GetKeyDown(KeyCode.Keypad9))
+                    else if (Input.GetKeyDown(KeyCode.Keypad9) || Input.GetKeyDown(KeyCode.Alpha9))
                     {
                         Game.Player.AttemptMove(1, 1);
                     }
-                    else if (Input.GetKeyDown(KeyCode.Keypad1))
+                    else if (Input.GetKeyDown(KeyCode.Keypad1)|| Input.GetKeyDown(KeyCode.Alpha1))
                     {
                         Game.Player.AttemptMove(-1, -1);
                     }
-                    else if (Input.GetKeyDown(KeyCode.Keypad3))
+                    else if (Input.GetKeyDown(KeyCode.Keypad3) || Input.GetKeyDown(KeyCode.Alpha3))
                     {
                         Game.Player.AttemptMove(1, -1);
                     }
