@@ -41,7 +41,8 @@ public static class ItemEffects
     public static void Bleeder(Actor target, Item item, int value) 
     {
         target.Map.Game.Log("Your weapon inflicts a nasty wound.");
-        target.health.InflictBleeding(value);
+        //target.health.InflictBleeding(value);
+        target.AddCondition(new BleedingCondition(value));
     }
 
     public static void DescendLevel(Actor target, Item item, int value) {

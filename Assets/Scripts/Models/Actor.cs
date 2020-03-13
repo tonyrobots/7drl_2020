@@ -6,6 +6,8 @@ public abstract class Actor : Entity
 {
 
     public bool isAlive = true;
+    public string killedBy = "";
+
 
     //stats
     public int strength = 10;
@@ -26,9 +28,12 @@ public abstract class Actor : Entity
 
     // TODO Will need to develop this system, probably also using components? Wish I were using unity more. Too late?
     public List<string> statuses = new List<string>();
+
     
     // components
     public Health health;
+    public List<Condition> conditions = new List<Condition>();
+
 
 
     public void Wait()
@@ -94,6 +99,13 @@ public abstract class Actor : Entity
         }        
     }
 
+    protected void TickConditions() {
+        for (int i = 0; i < conditions.Count; i++)
+        {
+            conditions[i].Tick();
+        }
+    }
+
     public virtual float EvadeChance() {
         // this is temporary
         return (agility/100f);
@@ -119,13 +131,24 @@ public abstract class Actor : Entity
 
     }
 
-    public string ListInventoryAsString(){
-        string inv = "";
-        foreach (Item i in Inventory)
-        {
-            inv += i.Name + ", ";
+    public void AddCondition(Condition c) {
+        bool conditionAdded = false;
+        for (int i = 0; i < conditions.Count; i++)
+        {   
+            // if the actor already has this condition, compound it with the preexisting condition
+            if (c.GetType() == conditions[i].GetType()){ 
+                conditions[i] = c.Compound(conditions[i]);
+                conditionAdded = true;
+                Debug.Log($"{Name} already has condition, compounding.");
+            }
         }
-        return inv;
+
+        if (!conditionAdded)
+        {
+            conditions.Add(c); // add it to the list
+            c.Owner = this; // assign this actor as the condition's owner
+            c.Start();
+        }
     }
 
 }

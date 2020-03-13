@@ -37,7 +37,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private GameObject welcomePanel = null;
     [SerializeField] private GameObject helpPanel = null;
-    [SerializeField] private GameObject winnerPanel = null;
+    [SerializeField] private GameObject gameoverPanel = null;
     [SerializeField] private GameObject infoPanel = null;
 
 
@@ -53,6 +53,8 @@ public class UIManager : MonoBehaviour
     public bool InventoryIsOpen;
 
     public void Start() {
+        HideGameOverPanel();
+        HideInfoPanel();
         ShowWelcomePanel();
         HideHelpPanel();        
     }
@@ -79,14 +81,15 @@ public class UIManager : MonoBehaviour
         healthBar.localScale = new Vector3(((float)game.Player.health.Hitpoints/game.Player.health.MaxHitpoints),1f,1f);
 
         string statusesList = "";
-        foreach (string status in game.Player.statuses) {
-            statusesList += $"{status}     ";
+        // foreach (string status in game.Player.statuses) {
+        foreach (Condition c in game.Player.conditions) {
+            statusesList += $"<{c.Hexcolor}><b>{c.Name.ToUpper()}</b></color>     ";
         }
         statusField.text = statusesList;
         goldField.text = $"{game.Player.gold}";
         charLevelField.text = $"{game.Player.charLevel}";
         XPField.text = $"{game.Player.XP}/{game.Player.XPNeededForNextLevel()}";
-        XPBar.localScale = new Vector3(((float)game.Player.XP / game.Player.XPNeededForNextLevel()), 1f, 1f);
+        XPBar.localScale = new Vector3((((float)game.Player.XP - game.Player.XPNeededForLevel(game.Player.charLevel))/ (game.Player.XPNeededForNextLevel()-game.Player.XPNeededForLevel(game.Player.charLevel))), 1f, 1f);
 
         DLevelField.text = $"Fortress Level: {game.DungeonLevel}";
         turnsField.text = $"Turns: {game.TurnCount}";
@@ -207,15 +210,21 @@ public class UIManager : MonoBehaviour
 
     public void ShowWinnerPanel()
     {
-        //welcomePanel.transform.localScale = new Vector3(1, 1, 1);
-        winnerPanel.SetActive(true);
-        // game.gamestate = Game.GameStates.WELCOME;
+        gameoverPanel.SetActive(true);
     }
 
-    public void HideWinnerPanel()
+    public void ShowGameOverPanel()
+    {
+        
+        gameoverPanel.GetComponentsInChildren<TextMeshProUGUI>()[0].text  = $"You are DEAD.";
+        gameoverPanel.GetComponentsInChildren<TextMeshProUGUI>()[1].text = $"{game.Player.Name} was killed by {game.Player.killedBy } on level {game.DungeonLevel} of the Citrus Fortress. You lasted for {game.TurnCount} turns. It's the hope what kills ya.";
+        gameoverPanel.SetActive(true);
+    }
+
+    public void HideGameOverPanel()
     {
         //welcomePanel.transform.localScale = new Vector3(0, 0, 0);
-        winnerPanel.SetActive(false);
+        gameoverPanel.SetActive(false);
     }
 
     public void ShowMonsterInfo(Monster m) { // tODO should genericize these

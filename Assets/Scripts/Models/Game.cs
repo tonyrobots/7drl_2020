@@ -65,7 +65,7 @@ public class Game
 
     public void AdvanceTurn(int t = 1)
     {
-
+        if (!Player.isAlive) return;
         //WC ProcessEntitiesQueue();
 
         TurnCount++;
@@ -86,7 +86,7 @@ public class Game
         // wC uiManager.UpdatePlayerStats(game);
         wc.FinalizeTurn();
         Player.Tick(TurnCount);
-        gamestate = Game.GameStates.PLAYER_TURN;
+        if (gamestate != Game.GameStates.PLAYER_DEAD) gamestate = Game.GameStates.PLAYER_TURN;
         Player.ProcessUpgrades();
         // WC uiManager.UpdateMessageLog(game);
     }
@@ -153,6 +153,8 @@ public class Game
 
         if (winner) {
             wc.uiManager.ShowWinnerPanel();
+        } else {
+            wc.uiManager.ShowGameOverPanel();
         }
         Log("Game is over. Hit space to restart.");
         wc.FinalizeTurn();

@@ -86,6 +86,7 @@ public class Player:Actor
     public void Tick(int currentTurn) {
         // do all "tick" actions that have registered. Need to figure out how to handle.
         health.Tick();
+        TickConditions(); 
 
     }
 
@@ -122,7 +123,13 @@ public class Player:Actor
     }
 
     public int XPNeededForNextLevel() {
-        return 25 * charLevel * (1 + charLevel);
+        return XPNeededForLevel(charLevel+1);
+    }
+
+    public int XPNeededForLevel(int level)
+    {
+        return 15 * (level-1) * level;
+        // 30 - 75 - 180 - 300 - 450
         // return (5 * charLevel);
     }
 

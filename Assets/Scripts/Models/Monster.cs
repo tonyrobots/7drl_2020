@@ -29,6 +29,7 @@ public class Monster : Actor
 
         // replace this something that iterates through all registered "tick" objects (or the other way 'round, somehow)
         health.Tick();
+        TickConditions(); // tick all of the  monster's conditions (e.g poisoned, bleeding, confused, etc.)
 
         // replace this with some actual "AI" soon:
             if (alertCountdown > 0) {
@@ -107,14 +108,6 @@ public class Monster : Actor
         }
     }
 
-    void Attack(Actor target) {
-        Map.Game.Log ($"{Name} bites {target.Name}");
-        // determine if it's a hit
-        // determine damage
-        // inflict damage
-        target.health.TakeDamage(4);
-        if (Random.Range(0,3) == 2) target.health.InflictBleeding(3);    
-    }
 
     public override void Die() {
         Map.Game.Log($"{Name} dies.");

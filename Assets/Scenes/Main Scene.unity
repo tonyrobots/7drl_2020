@@ -4485,7 +4485,7 @@ MonoBehaviour:
   messagesField: {fileID: 1845766813}
   welcomePanel: {fileID: 1543029706}
   helpPanel: {fileID: 1399102734}
-  winnerPanel: {fileID: 1175010197}
+  gameoverPanel: {fileID: 1175010197}
   infoPanel: {fileID: 790261727}
   decisionPanel: {fileID: 1346477859}
   decisionHeader: {fileID: 1188876829}
@@ -5028,7 +5028,7 @@ GameObject:
   - component: {fileID: 1175010200}
   - component: {fileID: 1175010199}
   m_Layer: 5
-  m_Name: You Win Panel
+  m_Name: Game Over Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

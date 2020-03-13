@@ -7,7 +7,6 @@ public class Health
 {
     int _hitpoints;
     int _maxHitpoints;
-    int bleedingTimer=0;
     int REGENERATION_TIME = 12;
     int regenerationTimer = 12;
     Actor _parent;
@@ -20,11 +19,10 @@ public class Health
         _parent = parent;
     }
 
-    public void TakeDamage(int damage) {
+    public void TakeDamage(int damage, string cause) {
         _hitpoints -= damage;
+        _parent.killedBy = cause;
         // _parent.Map.Game.Log($"{_parent.Name} takes {damage} damage.");
-
-
 
         //reset the regeneration counter
         regenerationTimer = REGENERATION_TIME;
@@ -39,15 +37,7 @@ public class Health
     public void Tick() {
         if (!_parent.isAlive) return; // ticker has stopped ;)
 
-        // like an turn-based update function
-        if (bleedingTimer > 0) {
-            _parent.Map.Game.Log($"{_parent.Name} is bleeding.");
-            TakeDamage(1);
-            bleedingTimer--;
-        } else {
-            _parent.statuses.Remove("Bleeding");
-
-        }
+        // Tick() is like an turn-based update function
 
         // heal slowly over time
         if (Hitpoints < MaxHitpoints) {
@@ -60,9 +50,7 @@ public class Health
     }
 
     public void InflictBleeding (int duration) {
-        bleedingTimer += duration;
-        _parent.Map.Game.Log($"{_parent.Name} starts to bleed.");
-        _parent.statuses.Add("Bleeding");
+
     }
 
     public int Heal (int attemptedAmount) {

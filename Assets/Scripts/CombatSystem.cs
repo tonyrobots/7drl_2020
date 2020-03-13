@@ -47,10 +47,16 @@ public class CombatSystem
         msg += $"for {damage} damage.";
         game.Log(msg);
         // apply the damage
-        target.health.TakeDamage(damage);
+        target.health.TakeDamage(damage, "a " + attacker.Name);
 
         // if the weapon has any special effects, do them now
         if (attacker.myWeapon != null) attacker.myWeapon.ActivateItem(target);
+
+        // what about inherent monster/player effects?
+        // TODO - implement!
+
+        // temp - poison the target!
+        target.AddCondition(new PoisonedCondition(3));
 
         if (target.isAlive == false && attacker== game.Player) {
             game.Player.GainXP(target.XPvalue());
