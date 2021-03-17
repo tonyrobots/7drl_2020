@@ -56,7 +56,7 @@ public class CombatSystem
         // TODO - implement!
 
         // temp - poison the target!
-        target.AddCondition(new PoisonedCondition(3));
+        //target.AddCondition(new PoisonedCondition(3));
 
         if (target.isAlive == false && attacker== game.Player) {
             game.Player.GainXP(target.XPvalue());
